@@ -5,8 +5,9 @@ import { api } from '@/lib/api/axios';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Package, ChevronRight, ShoppingBag, Loader2, RefreshCw } from 'lucide-react';
+import { Package, ChevronRight, ShoppingBag, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
 import { formatINR } from '@/lib/currency';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 const STATUS_STYLES: Record<string, string> = {
     pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
@@ -22,6 +23,12 @@ export default function MyOrdersPage() {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState('');
+
+    // Modal state
+    const [modalOpen, setModalOpen] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
+    const [pendingCancelId, setPendingCancelId] = useState<string | null>(null);
 
     const fetchOrders = useCallback(async (showSpinner = false) => {
         if (showSpinner) setRefreshing(true);
@@ -36,17 +43,33 @@ export default function MyOrdersPage() {
         }
     }, []);
 
-    const handleCancelOrder = async (orderId: string) => {
-        if (!window.confirm('Are you sure you want to cancel this order?')) return;
-        setRefreshing(true);
+    const openCancelModal = (e: React.MouseEvent, orderId: string) => {
+        e.preventDefault();
+        setPendingCancelId(orderId);
+        setError('');
+        setModalOpen(true);
+    };
+
+    const handleConfirmCancel = async () => {
+        if (!pendingCancelId) return;
+        setCancelling(true);
         try {
-            await api.patch(`/orders/${orderId}/cancel`);
+            await api.patch(`/orders/${pendingCancelId}/cancel`);
+            setModalOpen(false);
+            setPendingCancelId(null);
             await fetchOrders(false);
         } catch (err: any) {
-            alert(err.response?.data?.message || 'Failed to cancel order');
+            setModalOpen(false);
+            setError(err.response?.data?.message || 'Failed to cancel order. Please try again.');
         } finally {
-            setRefreshing(false);
+            setCancelling(false);
         }
+    };
+
+    const handleCloseModal = () => {
+        if (cancelling) return;
+        setModalOpen(false);
+        setPendingCancelId(null);
     };
 
     useEffect(() => {
@@ -80,7 +103,16 @@ export default function MyOrdersPage() {
                     <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} /> Refresh
                 </button>
             </div>
-            <p className="text-secondary-text mb-8">Track and manage all your purchases.</p>
+            <p className="text-secondary-text mb-6">Track and manage all your purchases.</p>
+
+            {/* Inline error banner */}
+            {error && (
+                <div className="flex items-center gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 rounded-xl px-4 py-3 mb-6 text-sm">
+                    <AlertCircle size={16} className="shrink-0" />
+                    <span>{error}</span>
+                    <button onClick={() => setError('')} className="ml-auto text-red-400 hover:text-red-600 transition">✕</button>
+                </div>
+            )}
 
             {orders.length === 0 ? (
                 <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
@@ -134,9 +166,8 @@ export default function MyOrdersPage() {
                                     </span>
                                     {['pending', 'confirmed'].includes(order.status) && (
                                         <button
-                                            onClick={(e) => { e.preventDefault(); handleCancelOrder(order._id); }}
-                                            disabled={refreshing}
-                                            className="text-sm font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 px-3 py-1 rounded-lg border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all disabled:opacity-50"
+                                            onClick={(e) => openCancelModal(e, order._id)}
+                                            className="text-sm font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 px-3 py-1 rounded-lg border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
                                         >
                                             Cancel
                                         </button>
@@ -150,6 +181,18 @@ export default function MyOrdersPage() {
                     ))}
                 </div>
             )}
+
+            {/* Confirmation Modal */}
+            <ConfirmModal
+                isOpen={modalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmCancel}
+                isLoading={cancelling}
+                title="Cancel this order?"
+                description="Are you sure you want to cancel this order? Stock will be restored, but this action cannot be undone."
+                confirmLabel="Yes, Cancel Order"
+                cancelLabel="No, Keep Order"
+            />
         </div>
     );
 }

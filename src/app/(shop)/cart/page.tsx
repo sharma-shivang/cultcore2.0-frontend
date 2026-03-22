@@ -55,7 +55,7 @@ export default function CartPage() {
                                     {/* Product Image */}
                                     <div className="w-full sm:w-32 h-32 shrink-0 bg-primary/5 rounded-xl overflow-hidden relative group">
                                         <img
-                                            src={product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800'}
+                                            src={(item.variantSku && item.product?.variants?.find((v: any) => v.sku === item.variantSku)?.images?.[0]) || product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800'}
                                             alt={product.title}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
@@ -68,8 +68,14 @@ export default function CartPage() {
                                                 <Link href={`/products/${product._id}`} className="font-semibold text-lg hover:text-cta transition-colors line-clamp-2">
                                                     {product.title}
                                                 </Link>
-                                                <div className="flex items-center gap-2 mt-1">
+                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                                                     <p className="text-sm text-secondary-text">{product.category}</p>
+                                                    {item.size && (
+                                                        <span className="text-sm text-secondary-text">Size: <span className="text-foreground font-medium">{item.size}</span></span>
+                                                    )}
+                                                    {item.color && (
+                                                        <span className="text-sm text-secondary-text">Color: <span className="text-foreground font-medium">{item.color}</span></span>
+                                                    )}
                                                     {product.discountPercent > 0 && (
                                                         <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                                                             {product.discountPercent}% OFF
@@ -85,7 +91,7 @@ export default function CartPage() {
                                                     Save for later
                                                 </button>
                                                 <button
-                                                    onClick={() => removeFromCart(product._id)}
+                                                    onClick={() => removeFromCart(product._id, item.variantSku)}
                                                     className="p-2 text-secondary-text hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
                                                     title="Remove item"
                                                 >
@@ -98,7 +104,7 @@ export default function CartPage() {
                                             {/* Quantity Selector */}
                                             <div className="flex items-center bg-background border border-primary/20 rounded-lg overflow-hidden shrink-0">
                                                 <button
-                                                    onClick={() => updateQuantity(product._id, item.quantity - 1)}
+                                                    onClick={() => updateQuantity(product._id, item.quantity - 1, item.variantSku)}
                                                     className="px-3 py-2 text-secondary-text hover:bg-primary/5 hover:text-foreground transition-colors disabled:opacity-50"
                                                     disabled={item.quantity <= 1}
                                                 >
@@ -108,9 +114,9 @@ export default function CartPage() {
                                                     {item.quantity}
                                                 </span>
                                                 <button
-                                                    onClick={() => updateQuantity(product._id, item.quantity + 1)}
+                                                    onClick={() => updateQuantity(product._id, item.quantity + 1, item.variantSku)}
                                                     className="px-3 py-2 text-secondary-text hover:bg-primary/5 hover:text-foreground transition-colors disabled:opacity-50"
-                                                    disabled={item.quantity >= product.stock}
+                                                    disabled={item.quantity >= (item.variantSku ? (product.variants?.find((v: any) => v.sku === item.variantSku)?.stock || 0) : product.stock)}
                                                 >
                                                     <Plus size={16} />
                                                 </button>
@@ -236,8 +242,8 @@ export default function CartPage() {
                         <Link
                             href={items.length > 0 ? "/checkout" : "#"}
                             className={`w-full py-4 rounded-xl font-medium transition shadow-md flex items-center justify-center gap-2 ${items.length > 0
-                                    ? "bg-cta text-surface hover:bg-cta-hover hover:shadow-lg"
-                                    : "bg-primary/10 text-secondary-text cursor-not-allowed"
+                                ? "bg-cta text-surface hover:bg-cta-hover hover:shadow-lg"
+                                : "bg-primary/10 text-secondary-text cursor-not-allowed"
                                 }`}
                         >
                             Proceed to Checkout

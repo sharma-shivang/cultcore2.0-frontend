@@ -12,12 +12,18 @@ import { formatINR } from '@/lib/currency';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
     const [product, setProduct] = useState<any>(null);
+    const [selectedImage, setSelectedImage] = useState<string>('');
     const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadingRelated, setLoadingRelated] = useState(true);
     const [error, setError] = useState('');
     const { user } = useAuth();
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // Variants State
+    const [selectedSize, setSelectedSize] = useState<string>('');
+    const [selectedColor, setSelectedColor] = useState<string>('');
+    const [currentVariant, setCurrentVariant] = useState<any>(null);
 
     useEffect(() => {
         fetchProduct();
@@ -27,13 +33,40 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     const fetchProduct = async () => {
         try {
             const response = await api.get(`/products/${params.id}`);
-            setProduct(response.data);
+            const data = response.data;
+            setProduct(data);
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to load product details');
         } finally {
             setLoading(false);
         }
     };
+
+    // Update current variant when selection changes
+    useEffect(() => {
+        if (product?.variants?.length > 0) {
+            const variant = product.variants.find(
+                (v: any) => v.size === selectedSize && v.color === selectedColor
+            );
+            setCurrentVariant(variant || null);
+        }
+    }, [selectedSize, selectedColor, product]);
+
+    useEffect(() => {
+        if (product?.variants?.length > 0) {
+            setSelectedSize(product.variants[0].size);
+            setSelectedColor(product.variants[0].color);
+        }
+    }, [product]);
+
+    // Update selected image when variant changes
+    useEffect(() => {
+        if (currentVariant?.images?.length > 0) {
+            setSelectedImage(currentVariant.images[0]);
+        } else if (product?.images?.length > 0 && !selectedImage) {
+            setSelectedImage(product.images[0]);
+        }
+    }, [currentVariant?.sku, product]);
 
     const fetchRelated = async () => {
         try {
@@ -79,9 +112,32 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         );
     }
 
-    const imageUrl = product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800';
+    const imageUrl = selectedImage || (currentVariant?.images?.[0]) || product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800';
     const disc = product.discountPercent ?? 0;
-    const salePrice = disc > 0 ? product.price * (1 - disc / 100) : null;
+
+    // Derived Images
+    const displayImages = (currentVariant?.images?.length > 0) ? currentVariant.images : product.images;
+    // Availability Helpers
+    const isColorAvailable = (color: string) => {
+        if (!product.variants) return true;
+        // A color is available if any variant with this color is in stock
+        return product.variants.some((v: any) => v.color === color && v.stock > 0);
+    };
+
+    const isSizeAvailableForColor = (size: string, color: string | null) => {
+        if (!product.variants) return true;
+        if (!color) return true;
+        // A size is available for a color if the specific variant is in stock
+        return product.variants.some((v: any) => v.color === color && v.size === size && v.stock > 0);
+    };
+    // Derived Price & Stock
+    const displayPrice = currentVariant ? currentVariant.price : product.price;
+    const displayStock = currentVariant ? currentVariant.stock : product.stock;
+    const salePrice = disc > 0 ? displayPrice * (1 - disc / 100) : null;
+
+    // Group variants for UI
+    const availableSizes = Array.from(new Set(product.variants?.map((v: any) => v.size) || [])) as string[];
+    const availableColors = Array.from(new Set(product.variants?.map((v: any) => v.color) || [])) as string[];
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -96,20 +152,40 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             </nav>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-                {/* Product Image */}
-                <div className="aspect-square w-full rounded-2xl bg-surface overflow-hidden relative shadow-md">
-                    <img src={imageUrl} alt={product.title} className="absolute inset-0 w-full h-full object-cover" />
-                    <div className="absolute top-4 left-4 bg-surface/90 backdrop-blur px-3 py-1 rounded-full text-sm font-semibold text-foreground">
-                        {product.category}
-                    </div>
-                    {disc > 0 && (
-                        <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow">
-                            {disc}% off
+                {/* Product Image & Gallery */}
+                <div className="space-y-6">
+                    <div className="aspect-square w-full rounded-2xl bg-surface overflow-hidden relative shadow-md">
+                        <img src={imageUrl} alt={product.title} className="absolute inset-0 w-full h-full object-cover transition-all duration-300" />
+                        <div className="absolute top-4 left-4 bg-surface/90 backdrop-blur px-3 py-1 rounded-full text-sm font-semibold text-foreground">
+                            {product.category}
                         </div>
-                    )}
-                    {product.stock === 0 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                            <span className="bg-surface text-foreground px-6 py-3 rounded-full font-bold shadow-lg">Out of Stock</span>
+                        {disc > 0 && (
+                            <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow">
+                                {disc}% off
+                            </div>
+                        )}
+                        {product.stock === 0 && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                                <span className="bg-surface text-foreground px-6 py-3 rounded-full font-bold shadow-lg">Out of Stock</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Thumbnail Gallery */}
+                    {displayImages && displayImages.length > 1 && (
+                        <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                            {displayImages.map((img: string, idx: number) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setSelectedImage(img)}
+                                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img
+                                        ? 'border-cta shadow-md scale-105'
+                                        : 'border-primary/10 hover:border-cta/50 opacity-70 hover:opacity-100'
+                                        }`}
+                                >
+                                    <img src={img} alt={`${product.title} ${idx + 1}`} className="absolute inset-0 w-full h-full object-cover" />
+                                </button>
+                            ))}
                         </div>
                     )}
                 </div>
@@ -126,16 +202,75 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                             <div className="flex items-center gap-4 flex-wrap">
                                 <p className="text-3xl font-black text-cta">{formatINR(salePrice)}</p>
                                 <div>
-                                    <p className="text-base text-secondary-text line-through">{formatINR(product.price)}</p>
+                                    <p className="text-base text-secondary-text line-through">{formatINR(displayPrice)}</p>
                                     <span className="inline-block bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-bold px-2 py-0.5 rounded-full">
                                         {disc}% off
                                     </span>
                                 </div>
                             </div>
                         ) : (
-                            <p className="text-3xl font-black text-cta">{formatINR(product.price)}</p>
+                            <p className="text-3xl font-black text-cta">{formatINR(displayPrice)}</p>
                         )}
                     </div>
+
+                    {/* Variant Selection */}
+                    {product.variants?.length > 0 && (
+                        <div className="space-y-6 mb-8 pt-6 border-t border-primary/10">
+                            {/* Color Selection */}
+                            {availableColors.length > 0 && (
+                                <div>
+                                    <h4 className="text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Color</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {availableColors.map(color => {
+                                            const isAvailable = isColorAvailable(color);
+                                            return (
+                                                <button
+                                                    key={color}
+                                                    onClick={() => setSelectedColor(color)}
+                                                    disabled={!isAvailable}
+                                                    className={`px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all ${selectedColor === color
+                                                        ? 'border-cta bg-cta/5 text-cta'
+                                                        : isAvailable
+                                                            ? 'border-primary/10 hover:border-primary/30 text-secondary-text'
+                                                            : 'border-primary/5 bg-primary/5 text-secondary-text/30 cursor-not-allowed line-through'
+                                                        }`}
+                                                >
+                                                    {color}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Size Selection */}
+                            {availableSizes.length > 0 && (
+                                <div>
+                                    <h4 className="text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Size</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {availableSizes.map(size => {
+                                            const isAvailable = isSizeAvailableForColor(size, selectedColor);
+                                            return (
+                                                <button
+                                                    key={size}
+                                                    onClick={() => setSelectedSize(size)}
+                                                    disabled={!isAvailable}
+                                                    className={`px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all ${selectedSize === size
+                                                        ? 'border-cta bg-cta/5 text-cta'
+                                                        : isAvailable
+                                                            ? 'border-primary/10 hover:border-primary/30 text-secondary-text'
+                                                            : 'border-primary/5 bg-primary/5 text-secondary-text/30 cursor-not-allowed line-through'
+                                                        }`}
+                                                >
+                                                    {size}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* Rating */}
                     <div className="flex items-center mb-6">
@@ -156,14 +291,24 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     {/* Action Area */}
                     <div className="mt-8 pt-8 border-t border-primary/10">
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <AddToCartButton productId={product._id} stock={product.stock} />
+                            <AddToCartButton
+                                productId={product._id}
+                                stock={displayStock}
+                                variant={currentVariant}
+                                size={selectedSize || undefined}
+                                color={selectedColor || undefined}
+                            />
                         </div>
-                        {product.stock > 0 && (
+                        {displayStock > 0 ? (
                             <p className="mt-4 text-sm text-secondary-text text-center flex items-center justify-center">
                                 <svg className="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                {product.stock} items available. Ready to ship.
+                                {displayStock} items available. Ready to ship.
+                            </p>
+                        ) : (
+                            <p className="mt-4 text-sm text-red-500 text-center font-medium">
+                                Selected combination is currently out of stock.
                             </p>
                         )}
                     </div>

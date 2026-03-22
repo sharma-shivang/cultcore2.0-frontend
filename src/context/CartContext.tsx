@@ -7,6 +7,9 @@ import { useAuth } from './AuthContext';
 interface CartItem {
     product: any; // Populated Product details
     quantity: number;
+    variantSku?: string;
+    size?: string;
+    color?: string;
 }
 
 interface CartContextType {
@@ -14,9 +17,9 @@ interface CartContextType {
     savedItems: CartItem[];
     subtotal: number;
     loading: boolean;
-    addToCart: (productId: string, quantity?: number) => Promise<void>;
-    updateQuantity: (productId: string, quantity: number) => Promise<void>;
-    removeFromCart: (productId: string) => Promise<void>;
+    addToCart: (productId: string, quantity?: number, variantSku?: string, size?: string, color?: string) => Promise<void>;
+    updateQuantity: (productId: string, quantity: number, variantSku?: string) => Promise<void>;
+    removeFromCart: (productId: string, variantSku?: string) => Promise<void>;
     saveForLater: (productId: string) => Promise<void>;
     moveToCart: (productId: string) => Promise<void>;
     fetchCart: () => Promise<void>;
@@ -56,13 +59,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     }, [isAuthenticated]);
 
-    const addToCart = async (productId: string, quantity: number = 1) => {
+    const addToCart = async (productId: string, quantity: number = 1, variantSku?: string, size?: string, color?: string) => {
         if (!isAuthenticated) {
             alert('Please login to add items to your cart.');
             return;
         }
         try {
-            const res = await api.post('/cart/add', { productId, quantity });
+            const res = await api.post('/cart/add', { productId, quantity, variantSku, size, color });
             setItems(res.data.cart?.items || []);
             setSavedItems(res.data.cart?.savedForLater || []);
             setSubtotal(res.data.subtotal || 0);
@@ -72,9 +75,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const updateQuantity = async (productId: string, quantity: number) => {
+    const updateQuantity = async (productId: string, quantity: number, variantSku?: string) => {
         try {
-            const res = await api.patch('/cart/update', { productId, quantity });
+            const res = await api.patch('/cart/update', { productId, quantity, variantSku });
             setItems(res.data.cart?.items || []);
             setSavedItems(res.data.cart?.savedForLater || []);
             setSubtotal(res.data.subtotal || 0);
@@ -85,9 +88,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const removeFromCart = async (productId: string) => {
+    const removeFromCart = async (productId: string, variantSku?: string) => {
         try {
-            const res = await api.delete(`/cart/remove/${productId}`);
+            const url = variantSku ? `/cart/remove/${productId}?variantSku=${variantSku}` : `/cart/remove/${productId}`;
+            const res = await api.delete(url);
             setItems(res.data.cart?.items || []);
             setSavedItems(res.data.cart?.savedForLater || []);
             setSubtotal(res.data.subtotal || 0);

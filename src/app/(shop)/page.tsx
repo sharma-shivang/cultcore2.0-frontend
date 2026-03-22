@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[90vh] flex items-center overflow-hidden bg-[#0a0a0b]">
+      <section className="relative min-h-[90vh] flex items-center py-20 md:py-0 overflow-hidden bg-[#0a0a0b]">
         {/* Animated Background Gradients */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
           <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] bg-cta/20 rounded-full blur-[120px] animate-pulse"></div>
@@ -52,7 +52,7 @@ export default function Home() {
         </div>
 
         {/* Floating Stats or Badges */}
-        <div className="absolute bottom-12 left-0 w-full z-10 overflow-hidden hidden lg:block">
+        <div className="absolute bottom-6 left-0 w-full z-10 overflow-hidden hidden lg:block">
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-12 text-white/40 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
               <div className="flex items-center gap-3">

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api/axios';
 import { Save, X } from 'lucide-react';
 import Link from 'next/link';
+import ImageGalleryManager from './ImageGalleryManager';
+import VariantManager from './VariantManager';
 
 interface ProductFormProps {
     initialData?: any;
@@ -25,8 +27,9 @@ export default function ProductForm({ initialData = {}, isEditing = false }: Pro
         price: initialData.price || '',
         category: initialData.category || CATEGORIES[0],
         stock: initialData.stock || '',
-        images: initialData.images?.join(', ') || '',
+        images: initialData.images || [],
         discountPercent: initialData.discountPercent || 0,
+        variants: initialData.variants || [],
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -46,7 +49,7 @@ export default function ProductForm({ initialData = {}, isEditing = false }: Pro
                 price: parseFloat(formData.price as string),
                 stock: parseInt(formData.stock as string, 10),
                 discountPercent: parseFloat(formData.discountPercent as string),
-                images: formData.images.split(',').map((url: string) => url.trim()).filter(Boolean),
+                images: formData.images,
             };
 
             if (isEditing) {
@@ -168,16 +171,22 @@ export default function ProductForm({ initialData = {}, isEditing = false }: Pro
 
                     {/* Images */}
                     <div className="col-span-2">
-                        <label className="block text-sm font-medium text-foreground mb-2">Image URLs (comma-separated)</label>
-                        <input
-                            type="text"
-                            name="images"
-                            value={formData.images}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 bg-background border border-primary/20 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent text-foreground font-mono text-sm"
-                            placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+                        <label className="block text-sm font-medium text-foreground mb-3">Product Images</label>
+                        <ImageGalleryManager
+                            images={formData.images}
+                            onImagesChange={(urls) => setFormData(prev => ({ ...prev, images: urls }))}
+                            maxImages={8}
                         />
-                        <p className="text-xs text-secondary-text mt-2">Paste full valid URLs separated by commas. Temporary simple string array input mechanism.</p>
+                        <p className="text-xs text-secondary-text mt-3">Add up to 8 high-quality product images. The first image will be used as the primary thumbnail.</p>
+                    </div>
+
+                    {/* Variants */}
+                    <div className="col-span-2 pt-6 border-t border-primary/10">
+                        <VariantManager
+                            variants={formData.variants}
+                            onVariantsChange={(variants) => setFormData(prev => ({ ...prev, variants }))}
+                            basePrice={formData.price}
+                        />
                     </div>
                 </div>
             </div>

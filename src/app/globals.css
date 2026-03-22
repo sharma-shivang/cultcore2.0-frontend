@@ -14,14 +14,15 @@
 }
 
 .dark {
-  --background: 11 15 20;
-  --surface: 17 24 39;
-  --primary: 249 250 251;
-  --accent: 59 130 246;
-  --cta: 37 99 235;
-  --cta-hover: 96 165 250;
-  --foreground: 249 250 251;
-  --secondary-text: 156 163 175;
+  --background: 15 10 13;
+  --surface: 26 20 23;
+  --primary: 251 113 133;
+  --accent: 244 63 94;
+  --cta: 255 143 163;
+  --cta-hover: 244 63 94;
+  --foreground: 252 231 243;
+  --secondary-text: 191 163 173;
+  --border: 58 42 49;
 }
 
 body {

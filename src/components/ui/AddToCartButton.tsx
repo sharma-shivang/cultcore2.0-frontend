@@ -3,20 +3,32 @@
 import { useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface AddToCartButtonProps {
     productId: string;
     stock: number;
+    variant?: any;
+    size?: string;
+    color?: string;
     className?: string;
 }
 
-export default function AddToCartButton({ productId, stock, className = '' }: AddToCartButtonProps) {
+export default function AddToCartButton({ productId, stock, variant, size, color, className = '' }: AddToCartButtonProps) {
     const { addToCart } = useCart();
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+    const pathname = usePathname();
     const [loading, setLoading] = useState(false);
 
     const handleAdd = async () => {
+        if (!isAuthenticated) {
+            router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+            return;
+        }
         setLoading(true);
-        await addToCart(productId, 1);
+        await addToCart(productId, 1, variant?.sku, size, color);
         setLoading(false);
     };
 
