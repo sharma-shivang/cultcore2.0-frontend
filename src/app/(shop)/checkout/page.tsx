@@ -135,7 +135,7 @@ export default function CheckoutPage() {
                 </p>
                 {appliedCoupon && (
                     <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-2">
-                        🎉 Coupon <span className="font-mono">{appliedCoupon.code}</span> saved you ${appliedCoupon.discountAmount.toFixed(2)}!
+                        🎉 Coupon <span className="font-mono">{appliedCoupon.code}</span> saved you {formatINR(appliedCoupon.discountAmount)}!
                     </p>
                 )}
                 <p className="text-xs text-secondary-text font-mono mb-8 bg-primary/5 px-4 py-2 rounded-lg">

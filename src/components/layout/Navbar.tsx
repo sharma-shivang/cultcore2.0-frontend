@@ -18,13 +18,13 @@ export default function Navbar() {
     return (
         <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center mx-auto px-4">
-                <div className="mr-4 hidden md:flex">
+                <div className="mr-4 flex">
                     <Link href="/" className="mr-6 flex items-center space-x-2">
-                        <span className="hidden font-bold sm:inline-block">
-                            ElevateX
+                        <span className="font-bold inline-block">
+                            ElevateXG
                         </span>
                     </Link>
-                    <nav className="flex items-center space-x-6 text-sm font-medium">
+                    <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                         <Link
                             href="/products"
                             className="transition-colors hover:text-foreground/80 text-foreground/60"

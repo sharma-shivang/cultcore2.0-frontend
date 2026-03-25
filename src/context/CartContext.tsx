@@ -20,8 +20,8 @@ interface CartContextType {
     addToCart: (productId: string, quantity?: number, variantSku?: string, size?: string, color?: string) => Promise<void>;
     updateQuantity: (productId: string, quantity: number, variantSku?: string) => Promise<void>;
     removeFromCart: (productId: string, variantSku?: string) => Promise<void>;
-    saveForLater: (productId: string) => Promise<void>;
-    moveToCart: (productId: string) => Promise<void>;
+    saveForLater: (productId: string, variantSku?: string) => Promise<void>;
+    moveToCart: (productId: string, variantSku?: string) => Promise<void>;
     fetchCart: () => Promise<void>;
 }
 
@@ -100,9 +100,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const saveForLater = async (productId: string) => {
+    const saveForLater = async (productId: string, variantSku?: string) => {
         try {
-            const res = await api.patch(`/cart/save-for-later/${productId}`);
+            const url = variantSku ? `/cart/save-for-later/${productId}?variantSku=${variantSku}` : `/cart/save-for-later/${productId}`;
+            const res = await api.patch(url);
             setItems(res.data.cart?.items || []);
             setSavedItems(res.data.cart?.savedForLater || []);
             setSubtotal(res.data.subtotal || 0);
@@ -112,9 +113,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const moveToCart = async (productId: string) => {
+    const moveToCart = async (productId: string, variantSku?: string) => {
         try {
-            const res = await api.patch(`/cart/move-to-cart/${productId}`);
+            const url = variantSku ? `/cart/move-to-cart/${productId}?variantSku=${variantSku}` : `/cart/move-to-cart/${productId}`;
+            const res = await api.patch(url);
             setItems(res.data.cart?.items || []);
             setSavedItems(res.data.cart?.savedForLater || []);
             setSubtotal(res.data.subtotal || 0);

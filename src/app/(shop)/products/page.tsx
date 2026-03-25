@@ -110,7 +110,7 @@ function ProductsContent() {
                                 <button
                                     key={cat}
                                     onClick={() => handleCategory(cat)}
-                                    className={`block w-full text-left px-3 py-2 rounded-md transition ${category === cat || (cat === 'All' && !category) ? 'bg-indigo-50 text-cta font-medium' : 'text-secondary-text hover:bg-surface hover:text-foreground'}`}
+                                    className={`block w-full text-left px-3 py-2 rounded-md transition ${category === cat || (cat === 'All' && !category) ? 'bg-indigo-50 dark:bg-cta/20 text-cta font-medium' : 'text-secondary-text hover:bg-surface hover:text-foreground'}`}
                                 >
                                     {cat}
                                 </button>

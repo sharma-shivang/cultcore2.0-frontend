@@ -85,7 +85,7 @@ export default function CartPage() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <button
-                                                    onClick={() => saveForLater(product._id)}
+                                                    onClick={() => saveForLater(product._id, item.variantSku)}
                                                     className="text-xs font-medium text-cta hover:text-cta-hover transition-colors"
                                                 >
                                                     Save for later
@@ -183,7 +183,7 @@ export default function CartPage() {
                                                         <p className="text-sm text-secondary-text mt-1">{formatINR(product.price)}</p>
                                                     </div>
                                                     <button
-                                                        onClick={() => removeFromCart(product._id)}
+                                                        onClick={() => removeFromCart(product._id, item.variantSku)}
                                                         className="text-secondary-text hover:text-red-500 transition-colors"
                                                     >
                                                         <Trash2 size={18} />
@@ -191,7 +191,7 @@ export default function CartPage() {
                                                 </div>
                                                 <div className="mt-4 flex items-center justify-between">
                                                     <button
-                                                        onClick={() => moveToCart(product._id)}
+                                                        onClick={() => moveToCart(product._id, item.variantSku)}
                                                         className="bg-cta text-surface hover:bg-cta-hover px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2"
                                                     >
                                                         Move back to cart

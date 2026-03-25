@@ -6,7 +6,19 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center py-20 md:py-0 overflow-hidden bg-[#0a0a0b]">
+      <section className="relative min-h-[90vh] flex items-center py-20 md:py-0 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            // src="https://images.unsplash.com/photo-1635491108115-f843a860cebb?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Z2VtcyUyMGFuZCUyMHN0b25lc3xlbnwwfHwwfHx8MA%3D%3D"
+            // src="https://images.unsplash.com/photo-1584157234994-b1ea5fc1b444?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGdlbXMlMjBhbmQlMjBzdG9uZXN8ZW58MHx8MHx8fDA%3D"
+            src="https://images.unsplash.com/photo-1678244660394-fa02a19ac24a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTJ8fGdlbXMlMjBhbmQlMjBzdG9uZXN8ZW58MHx8MHx8fDA%3D"
+            alt="Background"
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-[#0a0a0b]/80"></div>
+        </div>
+
         {/* Animated Background Gradients */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
           <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] bg-cta/20 rounded-full blur-[120px] animate-pulse"></div>
@@ -17,19 +29,18 @@ export default function Home() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 animate-fade-in">
               <span className="flex h-2 w-2 rounded-full bg-cta animate-ping"></span>
-              <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Spring Collection 2024 is Live</span>
+              <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Spring Collection 2026 is Live</span>
             </div>
 
             <h1 className="text-6xl md:text-8xl font-black text-white tracking-tight mb-8 leading-[1.1]">
               Elevate Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cta via-cta-hover to-indigo-400">
-                Digital Lifestyle
+                Lifestyle
               </span>
             </h1>
 
             <p className="text-xl text-white/60 mb-12 max-w-2xl leading-relaxed">
-              Experience the future of premium commerce with ElevateX. Curated excellence,
-              seamless technology, and unparalleled style for the modern visionary.
+              Unveil curated brilliance and timeless artistry with ElevateXG. Experience rare, earth-born gems tailored for the modern visionary.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6">
@@ -103,7 +114,7 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-black/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
 
           <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-8 relative z-10">
-            Join the <br className="md:hidden" /> ElevateX Circle
+            Join the <br className="md:hidden" /> ElevateXG Circle
           </h2>
           <p className="text-white/80 text-lg md:text-xl mb-12 max-w-xl relative z-10">
             Be the first to experience our latest drops, exclusive events, and premium rewards.

@@ -43,7 +43,7 @@ export default function RegisterPage() {
                                 name="name"
                                 type="text"
                                 required
-                                className="relative block w-full appearance-none rounded-md border border-primary/20 px-3 py-2 text-foreground placeholder-gray-500 focus:z-10 focus:border-accent focus:outline-none focus:ring-accent sm:text-sm"
+                                className="relative block w-full appearance-none rounded-md border border-primary/20 bg-white/5 px-3 py-2 text-foreground placeholder:text-secondary-text focus:z-10 focus:border-cta focus:outline-none focus:ring-cta sm:text-sm"
                                 placeholder="Full Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -56,7 +56,7 @@ export default function RegisterPage() {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                className="relative block w-full appearance-none rounded-md border border-primary/20 px-3 py-2 text-foreground placeholder-gray-500 focus:z-10 focus:border-accent focus:outline-none focus:ring-accent sm:text-sm"
+                                className="relative block w-full appearance-none rounded-md border border-primary/20 bg-white/5 px-3 py-2 text-foreground placeholder:text-secondary-text focus:z-10 focus:border-cta focus:outline-none focus:ring-cta sm:text-sm"
                                 placeholder="Email address"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -69,7 +69,7 @@ export default function RegisterPage() {
                                 type="password"
                                 autoComplete="new-password"
                                 required
-                                className="relative block w-full appearance-none rounded-md border border-primary/20 px-3 py-2 text-foreground placeholder-gray-500 focus:z-10 focus:border-accent focus:outline-none focus:ring-accent sm:text-sm"
+                                className="relative block w-full appearance-none rounded-md border border-primary/20 bg-white/5 px-3 py-2 text-foreground placeholder:text-secondary-text focus:z-10 focus:border-cta focus:outline-none focus:ring-cta sm:text-sm"
                                 placeholder="Password (min 6 characters)"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}

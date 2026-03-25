@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatINR } from '@/lib/currency';
-import { Heart } from 'lucide-react';
+import { Heart, ShoppingBag } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
     product: {
@@ -18,17 +19,24 @@ interface ProductCardProps {
         rating: number;
         stock: number;
     };
+    onMoveToCart?: (e: React.MouseEvent) => void;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onMoveToCart }: ProductCardProps) {
     const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
     const { isAuthenticated } = useAuth();
+    const router = useRouter();
 
     const isWishlisted = isInWishlist(product._id);
 
     const toggleWishlist = async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if (!isAuthenticated) {
+            router.push('/login');
+            return;
+        }
 
         if (isWishlisted) {
             await removeFromWishlist(product._id);
@@ -42,14 +50,17 @@ export default function ProductCard({ product }: ProductCardProps) {
     const salePrice = disc > 0 ? product.price * (1 - disc / 100) : null;
 
     return (
-        <Link href={`/products/${product._id}`} className="group relative block overflow-hidden rounded-2xl bg-surface shadow-sm transition hover:shadow-xl">
+        <Link
+            href={`/products/${product._id}`}
+            className="group relative block overflow-hidden rounded-2xl bg-surface shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 isolation-isolate transform-gpu"
+        >
             <div className="relative aspect-square w-full overflow-hidden sm:aspect-[4/5]">
                 <Image
                     src={imageUrl}
                     alt={product.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity group-hover:opacity-75"
+                    className="absolute inset-0 h-full w-full object-cover opacity-100 transition-all duration-700 ease-out group-hover:opacity-90 group-hover:scale-110"
                 />
 
                 {/* Wishlist Toggle Button */}
@@ -81,6 +92,23 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <div className="absolute right-3 top-3 rounded-full bg-surface/90 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
                     {product.category}
                 </div>
+
+                {/* Move to Cart Overlay (Wishlist specific) */}
+                {onMoveToCart && product.stock > 0 && (
+                    <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onMoveToCart(e);
+                            }}
+                            className="w-full py-2 bg-cta text-surface rounded-xl font-bold text-sm shadow-lg hover:bg-cta-hover transition flex items-center justify-center gap-2 backdrop-blur-sm"
+                        >
+                            <ShoppingBag size={16} />
+                            Move to Cart
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="p-5 relative">

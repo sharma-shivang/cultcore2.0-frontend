@@ -42,7 +42,9 @@ function LoginContent() {
     };
 
     const handleGoogleLogin = () => {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ||
+            (process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api$/, '') : 'http://localhost:3000');
+
         window.location.href = `${backendUrl}/api/auth/google`;
     };
 
@@ -54,11 +56,11 @@ function LoginContent() {
                         Welcome Back
                     </h1>
                     <p className="text-lg text-secondary-text">
-                        Sign in to your ElevateX account
+                        Sign in to your ElevateXG account
                     </p>
                 </div>
 
-                <div className="mt-10 bg-white dark:bg-card-bg/50 backdrop-blur-xl border border-primary/5 rounded-[2.5rem] p-8 shadow-2xl shadow-primary/10">
+                <div className="mt-10 bg-white dark:bg-surface/50 backdrop-blur-xl border border-primary/5 rounded-[2.5rem] p-8 shadow-2xl shadow-primary/10">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div className="space-y-4">
                             <div className="space-y-2">
@@ -72,7 +74,7 @@ function LoginContent() {
                                     <input
                                         type="email"
                                         required
-                                        className="block w-full pl-11 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-foreground focus:ring-2 focus:ring-cta/50 focus:border-cta focus:bg-white outline-none transition-all duration-300 sm:text-sm"
+                                        className="block w-full pl-11 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-foreground focus:ring-2 focus:ring-cta/50 focus:border-cta focus:bg-white dark:focus:bg-surface outline-none transition-all duration-300 sm:text-sm"
                                         placeholder="alex@example.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -96,7 +98,7 @@ function LoginContent() {
                                     <input
                                         type="password"
                                         required
-                                        className="block w-full pl-11 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-foreground focus:ring-2 focus:ring-cta/50 focus:border-cta focus:bg-white outline-none transition-all duration-300 sm:text-sm"
+                                        className="block w-full pl-11 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-foreground focus:ring-2 focus:ring-cta/50 focus:border-cta focus:bg-white dark:focus:bg-surface outline-none transition-all duration-300 sm:text-sm"
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -106,7 +108,7 @@ function LoginContent() {
                         </div>
 
                         {error && (
-                            <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 animate-shake">
+                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 animate-shake">
                                 <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>
                                 {error}
                             </div>
@@ -132,14 +134,14 @@ function LoginContent() {
                                 <div className="w-full border-t border-primary/10"></div>
                             </div>
                             <div className="relative flex justify-center text-sm uppercase tracking-widest">
-                                <span className="px-4 bg-white dark:bg-card-bg text-secondary-text font-bold">Or continue with</span>
+                                <span className="px-4 bg-white dark:bg-surface text-secondary-text font-bold">Or continue with</span>
                             </div>
                         </div>
 
                         <div className="mt-8 grid grid-cols-1 gap-4">
                             <button
                                 onClick={handleGoogleLogin}
-                                className="w-full inline-flex justify-center items-center py-4 px-4 bg-white border border-primary/10 rounded-2xl shadow-sm text-sm font-bold text-foreground hover:bg-primary/5 hover:border-primary/20 transition-all duration-300"
+                                className="w-full inline-flex justify-center items-center py-4 px-4 bg-white dark:bg-white/10 border border-primary/10 rounded-2xl shadow-sm text-sm font-bold text-foreground hover:bg-primary/5 hover:border-primary/20 transition-all duration-300"
                             >
                                 <svg className="h-5 w-5 mr-3" viewBox="0 0 24 24">
                                     <path

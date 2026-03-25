@@ -10,33 +10,37 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'ElevateX | Premium E-Commerce',
-    template: '%s | ElevateX'
+    default: 'ElevateXG',
+    template: '%s | ElevateXG'
   },
-  description: 'Scalable e-commerce platform built with Next.js and NestJS',
-  keywords: ['e-commerce', 'premium', 'shopping', 'elevatex'],
-  authors: [{ name: 'ElevateX Team' }],
+  description: 'Premium e-commerce platform by ElevateXG, offering curated elegance and innovative leadership.',
+  keywords: ['e-commerce', 'premium', 'shopping', 'ElevateXG', 'jewelry', 'gems', 'consultancy'],
+  authors: [{ name: 'ElevateXG Team' }],
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://elevatex.com',
-    siteName: 'ElevateX',
-    title: 'ElevateX | Premium E-Commerce',
-    description: 'Scalable e-commerce platform built with Next.js and NestJS',
+    url: 'https://elevatexg.com',
+    siteName: 'ElevateXG',
+    title: 'ElevateXG | Premium E-Commerce',
+    description: 'Discover curated excellence and visionary growth with ElevateXG.',
     images: [
       {
-        url: 'https://elevatex.com/og-image.jpg',
+        url: 'https://elevatexg.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'ElevateX Premium E-Commerce',
+        alt: 'ElevateXG Premium E-Commerce',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ElevateX | Premium E-Commerce',
-    description: 'Discover premium products on ElevateX',
-    images: ['https://elevatex.com/og-image.jpg'],
+    title: 'ElevateXG | Premium E-Commerce',
+    description: 'Discover premium products and visionary growth with ElevateXG',
+    images: ['https://elevatexg.com/og-image.jpg'],
+  },
+  icons: {
+    icon: '/favicon.png',
+    apple: '/apple-icon.png',
   },
 };
 
