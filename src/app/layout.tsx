@@ -10,33 +10,33 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'ElevateXG',
-    template: '%s | ElevateXG'
+    default: 'Cult Core',
+    template: '%s | Cult Core'
   },
-  description: 'Premium e-commerce platform by ElevateXG, offering curated elegance and innovative leadership.',
-  keywords: ['e-commerce', 'premium', 'shopping', 'ElevateXG', 'jewelry', 'gems', 'consultancy'],
-  authors: [{ name: 'ElevateXG Team' }],
+  description: 'Premium e-commerce platform by Cult Core, offering curated elegance and innovative leadership.',
+  keywords: ['e-commerce', 'premium', 'shopping', 'Cult Core', 'jewelry', 'gems', 'consultancy'],
+  authors: [{ name: 'Cult Core Team' }],
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://elevatexg.com',
-    siteName: 'ElevateXG',
-    title: 'ElevateXG | Premium E-Commerce',
-    description: 'Discover curated excellence and visionary growth with ElevateXG.',
+    url: 'https://cultcore.com',
+    siteName: 'Cult Core',
+    title: 'Cult Core | Premium E-Commerce',
+    description: 'Discover curated excellence and visionary growth with Cult Core.',
     images: [
       {
-        url: 'https://elevatexg.com/og-image.jpg',
+        url: 'https://cultcore.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'ElevateXG Premium E-Commerce',
+        alt: 'Cult Core Premium E-Commerce',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ElevateXG | Premium E-Commerce',
-    description: 'Discover premium products and visionary growth with ElevateXG',
-    images: ['https://elevatexg.com/og-image.jpg'],
+    title: 'Cult Core | Premium E-Commerce',
+    description: 'Discover premium products and visionary growth with Cult Core',
+    images: ['https://cultcore.com/og-image.jpg'],
   },
   icons: {
     icon: '/favicon.png',

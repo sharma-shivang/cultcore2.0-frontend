@@ -14,7 +14,7 @@ const AboutPage = () => {
                         Empowering <span className="text-cta">Growth.</span>
                     </h1>
                     <p className="max-w-2xl mx-auto text-xl text-secondary-text leading-relaxed animate-slide-up">
-                        At <span className="font-bold text-primary italic underline decoration-cta/30">ElevateXG</span>, we bridge the gap between academic excellence and modern entrepreneurial innovation.
+                        At <span className="font-bold text-primary italic underline decoration-cta/30">Cult Core</span>, we bridge the gap between academic excellence and modern entrepreneurial innovation.
                     </p>
                 </div>
                 {/* Subtle background decoration */}
@@ -37,13 +37,13 @@ const AboutPage = () => {
                             </h3>
                             <div className="space-y-4 text-secondary-text leading-relaxed">
                                 <p>
-                                    The story of <span className="font-semibold text-foreground">ElevateXG</span> begins in the halls of prestige and the corridors of intellectual leadership. Our founder embarked on a dedicated path as a Professor, fueled by a passion for mentorship and the pursuit of excellence.
+                                    The story of <span className="font-semibold text-foreground">Cult Core</span> begins in the halls of prestige and the corridors of intellectual leadership. Our founder embarked on a dedicated path as a Professor, fueled by a passion for mentorship and the pursuit of excellence.
                                 </p>
                                 <p>
                                     This commitment to excellence led to the prestigious role of <span className="font-semibold text-foreground text-cta-hover">Director at Dr. K.N. Modi University</span>. Over years of institutional leadership, the founder didn't just manage; they mentored, built strategies, and fostered growth at the highest levels of academia.
                                 </p>
                                 <p>
-                                    Today, <span className="font-semibold text-cta">ElevateXG</span> is the natural evolution of that journey a transition from shaping minds in the classroom to elevating lifestyles and businesses in the global marketplace. We bring the rigor of academia to the creativity of entrepreneurship.
+                                    Today, <span className="font-semibold text-cta">Cult Core</span> is the natural evolution of that journey a transition from shaping minds in the classroom to elevating lifestyles and businesses in the global marketplace. We bring the rigor of academia to the creativity of entrepreneurship.
                                 </p>
                             </div>
                         </div>

@@ -40,7 +40,7 @@ export default function Home() {
             </h1>
 
             <p className="text-xl text-white/60 mb-12 max-w-2xl leading-relaxed">
-              Unveil curated brilliance and timeless artistry with ElevateXG. Experience rare, earth-born gems tailored for the modern visionary.
+              Unveil curated brilliance and timeless artistry with Cult Core. Experience rare, earth-born gems tailored for the modern visionary.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6">
@@ -114,7 +114,7 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-black/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
 
           <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-8 relative z-10">
-            Join the <br className="md:hidden" /> ElevateXG Circle
+            Join the <br className="md:hidden" /> Cult Core Circle
           </h2>
           <p className="text-white/80 text-lg md:text-xl mb-12 max-w-xl relative z-10">
             Be the first to experience our latest drops, exclusive events, and premium rewards.

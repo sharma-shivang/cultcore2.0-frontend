@@ -6,7 +6,7 @@ export default function Footer() {
             <div className="container flex flex-col items-center justify-between gap-6 md:h-12 md:flex-row mx-auto px-4">
                 <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
                     <p className="text-sm font-bold text-primary tracking-tight">
-                        © 2026 ElevateXG
+                        © 2026 Cult Core
                     </p>
                     <nav className="flex items-center gap-6">
                         <Link href="/about" className="text-sm font-medium text-secondary-text hover:text-cta transition-colors">

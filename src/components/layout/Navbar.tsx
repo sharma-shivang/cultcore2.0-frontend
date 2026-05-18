@@ -22,7 +22,7 @@ export default function Navbar() {
                 <div className="mr-2 md:mr-4 flex">
                     <Link href="/" className="mr-2 md:mr-6 flex items-center space-x-2">
                         <span className="font-bold inline-block">
-                            ElevateXG
+                            Cult Core
                         </span>
                     </Link>
                     <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">

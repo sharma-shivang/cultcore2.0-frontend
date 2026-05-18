@@ -56,7 +56,7 @@ function LoginContent() {
                         Welcome Back
                     </h1>
                     <p className="text-lg text-secondary-text">
-                        Sign in to your ElevateXG account
+                        Sign in to your Cult Core account
                     </p>
                 </div>
 
