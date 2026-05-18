@@ -9,6 +9,7 @@ interface User {
     email: string;
     role: string;
     name?: string;
+    picture?: string;
 }
 
 interface AuthContextType {
@@ -59,7 +60,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (token) {
             const decoded = decodeJwt(token);
             if (decoded) {
-                setUser({ id: decoded.sub, email: decoded.email || '', role: decoded.role });
+                setUser({
+                    id: decoded.sub,
+                    email: decoded.email || '',
+                    name: decoded.name || '',
+                    picture: decoded.picture || '',
+                    role: decoded.role
+                });
             } else {
                 Cookies.remove('accessToken');
                 Cookies.remove('refreshToken');
@@ -75,7 +82,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const decoded = decodeJwt(accessToken);
         if (decoded) {
             const userRole = decoded.role;
-            setUser({ id: decoded.sub, email: decoded.email || '', role: userRole });
+            setUser({
+                id: decoded.sub,
+                email: decoded.email || '',
+                name: decoded.name || '',
+                picture: decoded.picture || '',
+                role: userRole
+            });
 
             let target = redirectTo;
             if (!target || target === '/') {

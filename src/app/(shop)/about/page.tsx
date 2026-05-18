@@ -43,7 +43,7 @@ const AboutPage = () => {
                                     This commitment to excellence led to the prestigious role of <span className="font-semibold text-foreground text-cta-hover">Director at Dr. K.N. Modi University</span>. Over years of institutional leadership, the founder didn't just manage; they mentored, built strategies, and fostered growth at the highest levels of academia.
                                 </p>
                                 <p>
-                                    Today, <span className="font-semibold text-cta">ElevateXG</span> is the natural evolution of that journey—a transition from shaping minds in the classroom to elevating lifestyles and businesses in the global marketplace. We bring the rigor of academia to the creativity of entrepreneurship.
+                                    Today, <span className="font-semibold text-cta">ElevateXG</span> is the natural evolution of that journey a transition from shaping minds in the classroom to elevating lifestyles and businesses in the global marketplace. We bring the rigor of academia to the creativity of entrepreneurship.
                                 </p>
                             </div>
                         </div>

@@ -6,6 +6,7 @@ import { ShoppingCart, Heart } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import UserMenu from './UserMenu';
 
 export default function Navbar() {
     const { user, logout } = useAuth();
@@ -18,8 +19,8 @@ export default function Navbar() {
     return (
         <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center mx-auto px-4">
-                <div className="mr-4 flex">
-                    <Link href="/" className="mr-6 flex items-center space-x-2">
+                <div className="mr-2 md:mr-4 flex">
+                    <Link href="/" className="mr-2 md:mr-6 flex items-center space-x-2">
                         <span className="font-bold inline-block">
                             ElevateXG
                         </span>
@@ -43,7 +44,7 @@ export default function Navbar() {
                     <div className="w-full flex-1 md:w-auto md:flex-none">
                         {/* Search or other elements could go here */}
                     </div>
-                    <nav className="flex items-center gap-4">
+                    <nav className="flex items-center gap-2 md:gap-4">
                         <Link
                             href="/wishlist"
                             className="p-2 -mx-1 hover:bg-surface rounded-full transition-colors relative"
@@ -70,28 +71,31 @@ export default function Navbar() {
                         </Link>
                         <ThemeToggle />
                         {user ? (
-                            <div className="flex items-center gap-3">
-                                {user.role === 'admin' && (
+                            <>
+                                <div className="hidden md:flex items-center gap-3">
+                                    {user.role === 'admin' && (
+                                        <Link
+                                            href="/admin"
+                                            className="transition-colors hover:text-foreground/80 text-foreground/60 font-medium text-sm"
+                                        >
+                                            Admin
+                                        </Link>
+                                    )}
                                     <Link
-                                        href="/admin"
+                                        href="/account/orders"
                                         className="transition-colors hover:text-foreground/80 text-foreground/60 font-medium text-sm"
                                     >
-                                        Admin
+                                        My Orders
                                     </Link>
-                                )}
-                                <Link
-                                    href="/account/orders"
-                                    className="transition-colors hover:text-foreground/80 text-foreground/60 font-medium text-sm"
-                                >
-                                    My Orders
-                                </Link>
-                                <button
-                                    onClick={logout}
-                                    className="transition-colors hover:text-foreground/80 text-foreground/60 font-medium text-sm"
-                                >
-                                    Logout
-                                </button>
-                            </div>
+                                    <button
+                                        onClick={logout}
+                                        className="transition-colors hover:text-foreground/80 text-foreground/60 font-medium text-sm"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                                <UserMenu />
+                            </>
                         ) : (
                             <Link
                                 href="/login"
