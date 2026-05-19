@@ -15,7 +15,7 @@ function ProductsContent() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
-    const [categories, setCategories] = useState<string[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
 
     // URL Params State
     const page = parseInt(searchParams.get('page') || '1');
@@ -25,8 +25,8 @@ function ProductsContent() {
     // Fetch active categories dynamically from backend
     useEffect(() => {
         api.get('/categories')
-            .then(r => setCategories(r.data.map((c: any) => c.name)))
-            .catch(() => setCategories(['Electronics', 'Fashion', 'Home', 'Accessories', 'Clothing']));
+            .then(r => setCategories(r.data))
+            .catch(() => []);
     }, []);
 
     useEffect(() => {
@@ -106,15 +106,21 @@ function ProductsContent() {
                     <div className="mb-6">
                         <h3 className="font-semibold text-foreground mb-3 uppercase tracking-wider text-sm">Categories</h3>
                         <div className="space-y-2">
-                            {['All', ...categories].map((cat: string) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => handleCategory(cat)}
-                                    className={`block w-full text-left px-3 py-2 rounded-md transition ${category === cat || (cat === 'All' && !category) ? 'bg-indigo-50 dark:bg-cta/20 text-cta font-medium' : 'text-secondary-text hover:bg-surface hover:text-foreground'}`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
+                            {['All', ...categories].map((cat: any) => {
+                                const isAll = cat === 'All';
+                                const catId = isAll ? 'All' : cat._id;
+                                const catName = isAll ? 'All' : cat.name;
+                                
+                                return (
+                                    <button
+                                        key={catId}
+                                        onClick={() => handleCategory(isAll ? 'All' : catId)}
+                                        className={`block w-full text-left px-3 py-2 rounded-md transition ${category === catId || (isAll && !category) ? 'bg-indigo-50 dark:bg-cta/20 text-cta font-medium' : 'text-secondary-text hover:bg-surface hover:text-foreground'}`}
+                                    >
+                                        {catName}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 </aside>

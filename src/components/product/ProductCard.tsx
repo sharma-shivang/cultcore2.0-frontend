@@ -14,7 +14,7 @@ interface ProductCardProps {
         title: string;
         price: number;
         discountPercent?: number;
-        category: string;
+        category: any;
         images: string[];
         rating: number;
         stock: number;
@@ -61,6 +61,7 @@ export default function ProductCard({ product, onMoveToCart }: ProductCardProps)
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="absolute inset-0 h-full w-full object-cover opacity-100 transition-all duration-700 ease-out group-hover:opacity-90 group-hover:scale-110"
+                    priority
                 />
 
                 {/* Wishlist Toggle Button */}
@@ -84,13 +85,13 @@ export default function ProductCard({ product, onMoveToCart }: ProductCardProps)
                 )}
                 {/* Discount badge */}
                 {disc > 0 && (
-                    <div className="absolute left-3 top-3 rounded-full bg-red-500 text-white px-2.5 py-0.5 text-xs font-bold shadow">
+                    <div className="absolute left-3 top-12 rounded-full bg-red-500 text-white px-2.5 py-0.5 text-xs font-bold shadow">
                         {disc}% off
                     </div>
                 )}
                 {/* Category badge */}
-                <div className="absolute right-3 top-3 rounded-full bg-surface/90 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
-                    {product.category}
+                <div className="absolute left-2 top-3 rounded-full bg-surface/90 px-3 py-1 text-xs font-semibold backdrop-blur-sm ">
+                    {typeof product.category === 'object' ? product.category.name : product.category}
                 </div>
 
                 {/* Move to Cart Overlay (Wishlist specific) */}

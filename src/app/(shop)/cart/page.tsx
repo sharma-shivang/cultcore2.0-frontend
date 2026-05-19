@@ -69,7 +69,7 @@ export default function CartPage() {
                                                     {product.title}
                                                 </Link>
                                                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-                                                    <p className="text-sm text-secondary-text">{product.category}</p>
+                                                    <p className="text-sm text-secondary-text">{typeof product.category === 'object' ? product.category.name : product.category}</p>
                                                     {item.size && (
                                                         <span className="text-sm text-secondary-text">Size: <span className="text-foreground font-medium">{item.size}</span></span>
                                                     )}

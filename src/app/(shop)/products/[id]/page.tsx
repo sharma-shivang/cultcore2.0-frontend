@@ -157,7 +157,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     <div className="aspect-square w-full rounded-2xl bg-surface overflow-hidden relative shadow-md">
                         <img src={imageUrl} alt={product.title} className="absolute inset-0 w-full h-full object-cover transition-all duration-300" />
                         <div className="absolute top-4 left-4 bg-surface/90 backdrop-blur px-3 py-1 rounded-full text-sm font-semibold text-foreground">
-                            {product.category}
+                            {typeof product.category === 'object' ? product.category.name : product.category}
                         </div>
                         {disc > 0 && (
                             <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow">
@@ -339,7 +339,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                         <h2 className="text-3xl font-bold text-foreground mb-2">Related Products</h2>
                         <p className="text-secondary-text">You might also like these premium selections</p>
                     </div>
-                    <Link href={`/products?category=${product.category}`} className="text-cta font-bold hover:text-cta/80 transition-colors flex items-center group">
+                    <Link href={`/products?category=${typeof product.category === 'object' ? product.category._id : product.category}`} className="text-cta font-bold hover:text-cta/80 transition-colors flex items-center group">
                         See All
                         <svg className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />

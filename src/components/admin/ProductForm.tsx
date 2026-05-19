@@ -36,7 +36,7 @@ export default function ProductForm({ initialData = {}, isEditing = false }: Pro
         title: initialData.title || '',
         description: initialData.description || '',
         price: initialData.price || '',
-        category: initialData.category || '',
+        category: (typeof initialData.category === 'object' ? initialData.category._id : initialData.category) || '',
         stock: initialData.stock || '',
         images: initialData.images || [],
         discountPercent: initialData.discountPercent || 0,
