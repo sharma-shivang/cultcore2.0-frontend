@@ -40,7 +40,7 @@ export default function Home() {
             </h1>
 
             <p className="text-xl text-white/60 mb-12 max-w-2xl leading-relaxed">
-              Unveil curated brilliance and timeless artistry with Cult Core. Experience rare, earth-born gems tailored for the modern visionary.
+              Unveil curated brilliance and timeless artistry with Cult Core. Experience rare, earth-born products tailored for the modern visionary.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6">
@@ -92,7 +92,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               { title: "Precision Craftsmanship", desc: "Every product in our collection is vetted for uncompromising quality and detail.", icon: ShieldCheck },
-              { title: "Global reach", desc: "Fast, reliable shipping to over 150 countries with real-time tracking.", icon: Globe },
+              { title: "All India Reach", desc: "Fast, reliable shipping all over the over country with real-time tracking.", icon: Globe },
               { title: "24/7 Concierge", desc: "Our expert support team is always available to assist with your journey.", icon: Zap },
             ].map((feature, i) => (
               <div key={i} className="group p-8 rounded-3xl bg-surface border border-primary/5 hover:border-cta/20 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
@@ -108,7 +108,7 @@ export default function Home() {
       </section>
 
       {/* Newsletter / CTA */}
-      <section className="py-24 container mx-auto px-4">
+      {/* <section className="py-24 container mx-auto px-4">
         <div className="bg-cta rounded-[3rem] p-12 md:p-24 relative overflow-hidden flex flex-col items-center text-center">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
           <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-black/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
@@ -131,7 +131,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

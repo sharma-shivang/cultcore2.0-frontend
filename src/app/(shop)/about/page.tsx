@@ -14,7 +14,7 @@ const AboutPage = () => {
                         Empowering <span className="text-cta">Growth.</span>
                     </h1>
                     <p className="max-w-2xl mx-auto text-xl text-secondary-text leading-relaxed animate-slide-up">
-                        At <span className="font-bold text-primary italic underline decoration-cta/30">Cult Core</span>, we bridge the gap between academic excellence and modern entrepreneurial innovation.
+                        At <span className="font-bold text-primary italic underline decoration-cta/30">Cult Core</span>, We <span className="font-bold text-primary italic underline decoration-cta/30">Pooja Singh</span> and <span className="font-bold text-primary italic underline decoration-cta/30">Ipshita Singh</span> bring together timeless elegance, and modern entrepreneurial innovation to create a brand built on passion, purpose, and vision.
                     </p>
                 </div>
                 {/* Subtle background decoration */}
@@ -35,15 +35,16 @@ const AboutPage = () => {
                             <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 text-primary">
                                 From Shaping Minds to <br />Elevating Lifestyles
                             </h3>
+
                             <div className="space-y-4 text-secondary-text leading-relaxed">
                                 <p>
-                                    The story of <span className="font-semibold text-foreground">Cult Core</span> begins in the halls of prestige and the corridors of intellectual leadership. Our founder embarked on a dedicated path as a Professor, fueled by a passion for mentorship and the pursuit of excellence.
+                                    <span className="font-semibold text-foreground">Cult Core</span> is a story shaped by two generations of ambition, vision, and determination. It begins with <span className="font-semibold text-foreground">Pooja Singh</span>, a qualified <span className="font-semibold text-foreground">CMA</span> whose professional journey was built in the corporate world through dedication, strategic thinking, and a strong commitment to excellence. Years of experience in finance and corporate leadership helped shape a mindset driven by discipline, growth, and purposeful decision-making.
                                 </p>
                                 <p>
-                                    This commitment to excellence led to the prestigious role of <span className="font-semibold text-foreground text-cta-hover">Director at Dr. K.N. Modi University</span>. Over years of institutional leadership, the founder didn't just manage; they mentored, built strategies, and fostered growth at the highest levels of academia.
+                                    Alongside this journey was <span className="font-semibold text-foreground">Ipshita Singh</span>, a college <span className="font-semibold text-foreground">student</span> with a fresh perspective and a passion for modern ideas, creativity, and entrepreneurship. Growing up around values of hard work and perseverance, she developed a contemporary outlook and a desire to create something meaningful for a new generation.
                                 </p>
                                 <p>
-                                    Today, <span className="font-semibold text-cta">Cult Core</span> is the natural evolution of that journey a transition from shaping minds in the classroom to elevating lifestyles and businesses in the global marketplace. We bring the rigor of academia to the creativity of entrepreneurship.
+                                    Today, <span className="font-semibold text-foreground">Cult Core</span> stands as the evolution of this mother-daughter partnership transforming shared values into a brand that blends experience with innovation, structure with creativity, and timeless vision with modern ambition.
                                 </p>
                             </div>
                         </div>
@@ -69,7 +70,7 @@ const AboutPage = () => {
                     </div>
                     <h2 className="text-4xl font-display font-bold mb-8 text-primary">Our Mission</h2>
                     <p className="text-2xl font-medium leading-relaxed text-secondary-text italic line-clamp-4">
-                        "To empower individuals and organizations through a curation of intellectual growth, elegance, and visionary leadership consulting, fostering a legacy of excellence in every facet of life."
+                        "To inspire and empower individuals through innovation, creativity, and purposeful growth, building a brand that blends experience with fresh perspectives while creating meaningful impact and a culture of excellence."
                     </p>
                 </div>
             </section>
@@ -86,7 +87,7 @@ const AboutPage = () => {
                             </div>
                             <h3 className="text-2xl font-bold mb-4 text-foreground">Gems & Jewelry</h3>
                             <p className="text-secondary-text leading-relaxed">
-                                A curated selection of high-quality artificial jewelry and precious gems, representing elegance and uncompromised quality for the modern lifestyle.
+                                A curated selection of high quality artificial jewelry and precious gems, representing elegance and uncompromised quality for the modern lifestyle.
                             </p>
                         </div>
 
@@ -95,9 +96,9 @@ const AboutPage = () => {
                             <div className="w-14 h-14 bg-cta/10 text-cta rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                                 <BookOpen className="w-7 h-7" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4 text-foreground">E-Books</h3>
+                            <h3 className="text-2xl font-bold mb-4 text-foreground">Product Scoop</h3>
                             <p className="text-secondary-text leading-relaxed">
-                                Sharing established and cutting-edge knowledge through digital literature, designed to foster intellectual growth and personal empowerment.
+                                Curating thoughtfully selected products and emerging trends, designed to enhance lifestyles, inspire individuality, and deliver meaningful value.
                             </p>
                         </div>
 
@@ -106,9 +107,9 @@ const AboutPage = () => {
                             <div className="w-14 h-14 bg-cta/10 text-cta rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                                 <TrendingUp className="w-7 h-7" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4 text-foreground">Consultancy</h3>
+                            <h3 className="text-2xl font-bold mb-4 text-foreground">Keychains</h3>
                             <p className="text-secondary-text leading-relaxed">
-                                Leveraging decades of high-level institutional leadership to provide strategic consultancy services that help individuals and businesses thrive.
+                                Transforming everyday accessories into small expressions of identity, with keychains designed to blend creativity, style, and personal meaning.
                             </p>
                         </div>
                     </div>
@@ -116,7 +117,7 @@ const AboutPage = () => {
             </section>
 
             {/* Compliance Section */}
-            <section className="py-16">
+            {/* <section className="py-16">
                 <div className="container mx-auto px-4">
                     <div className="max-w-2xl mx-auto bg-surface border border-primary/10 rounded-3xl p-8 md:p-12">
                         <div className="flex items-center gap-4 mb-8">
@@ -140,7 +141,7 @@ const AboutPage = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* Closing */}
             <section className="py-20 text-center">
