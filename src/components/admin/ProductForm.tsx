@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api/axios';
 import { Save, X } from 'lucide-react';
@@ -17,15 +17,26 @@ export default function ProductForm({ initialData = {}, isEditing = false }: Pro
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [categories, setCategories] = useState<any[]>([]);
 
-    const CATEGORIES = ['Electronics', 'Clothing', 'Home', 'Beauty'];
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await api.get('/categories');
+                setCategories(response.data);
+            } catch (err) {
+                console.error('Failed to fetch categories:', err);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     // Local State
     const [formData, setFormData] = useState({
         title: initialData.title || '',
         description: initialData.description || '',
         price: initialData.price || '',
-        category: initialData.category || CATEGORIES[0],
+        category: initialData.category || '',
         stock: initialData.stock || '',
         images: initialData.images || [],
         discountPercent: initialData.discountPercent || 0,
@@ -101,8 +112,9 @@ export default function ProductForm({ initialData = {}, isEditing = false }: Pro
                             onChange={handleChange}
                             className="w-full px-4 py-2 bg-background border border-primary/20 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent text-foreground appearance-none"
                         >
-                            {CATEGORIES.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
+                            <option value="">Select a category</option>
+                            {categories.map(cat => (
+                                <option key={cat._id} value={cat._id}>{cat.name}</option>
                             ))}
                         </select>
                     </div>
