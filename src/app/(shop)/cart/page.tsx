@@ -224,10 +224,6 @@ export default function CartPage() {
                                 <span>Shipping estimate</span>
                                 <span className="font-medium text-foreground">Calculated at checkout</span>
                             </div>
-                            <div className="flex justify-between items-center">
-                                <span>Tax estimate</span>
-                                <span className="font-medium text-foreground">Calculated at checkout</span>
-                            </div>
                         </div>
 
                         <div className="border-t border-primary/10 my-6"></div>

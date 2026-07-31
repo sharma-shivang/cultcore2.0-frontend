@@ -16,8 +16,10 @@ interface ShippingAddress {
     country: string;
 }
 
-const FREE_SHIPPING_THRESHOLD = 999;
-const FLAT_SHIPPING = 99;
+// Shipping configuration: 120 below cart value 1500, else 150
+const SHIPPING_LOW_THRESHOLD_CHARGE = 120;
+const SHIPPING_HIGH_THRESHOLD_CHARGE = 150;
+const SHIPPING_THRESHOLD = 1500;
 
 export default function CheckoutPage() {
     const { items, subtotal, loading: cartLoading, fetchCart } = useCart();
@@ -26,7 +28,7 @@ export default function CheckoutPage() {
     const [address, setAddress] = useState<ShippingAddress>({
         street: '', city: '', state: '', zipCode: '', country: '',
     });
-    const [contact, setContact] = useState({ email: '', phone: '', orderNote: '' });
+    const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', orderNote: '' });
 
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -44,7 +46,7 @@ export default function CheckoutPage() {
     const [couponError, setCouponError] = useState('');
 
     const tax = 0;
-    const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING;
+    const shipping = subtotal < SHIPPING_THRESHOLD ? SHIPPING_LOW_THRESHOLD_CHARGE : SHIPPING_HIGH_THRESHOLD_CHARGE;
     const discount = appliedCoupon?.discountAmount ?? 0;
     const total = Math.max(0, subtotal - discount + shipping);
 
@@ -57,6 +59,8 @@ export default function CheckoutPage() {
 
     const isFormValid =
         Object.values(address).every((v) => v.trim().length > 0) &&
+        contact.firstName.trim().length > 0 &&
+        contact.lastName.trim().length > 0 &&
         contact.email.trim().length > 0 &&
         contact.phone.trim().length > 0;
 
@@ -102,12 +106,63 @@ export default function CheckoutPage() {
                 shippingAddress: address,
                 email: contact.email,
                 phone: contact.phone,
+                firstName: contact.firstName,
+                lastName: contact.lastName,
                 orderNote: contact.orderNote || undefined,
                 ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
             });
-            setOrderId(response.data._id);
+            const createdOrderId = response.data._id;
+            setOrderId(createdOrderId);
             setSuccess(true);
             await fetchCart();
+
+            // Resolve absolute image URL
+            const getAbsoluteImageUrl = (url?: string) => {
+                if (!url) return '';
+                if (url.startsWith('http://') || url.startsWith('https://')) return url;
+                const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || window.location.origin;
+                return `${baseUrl.replace(/\/$/, '')}${url.startsWith('/') ? '' : '/'}${url}`;
+            };
+
+            // Construct WhatsApp message with formatted order details
+            const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+919876543210';
+            const itemsText = items
+                .map((item, index) => {
+                    const product = item.product as any;
+                    return `${index + 1}. ${product?.title || 'Product'} x ${item.quantity} (${formatINR((product?.price || 0) * item.quantity)})`;
+                })
+                .join('\n');
+
+            const imagesList = items
+                .map((item) => {
+                    const product = item.product as any;
+                    return getAbsoluteImageUrl(product?.images?.[0]);
+                })
+                .filter((url) => !!url)
+                .join('\n');
+
+            const message = `*New Order Confirmed!*\n\n` +
+                `*Order Details:*\n` +
+                `• *Name:* ${contact.firstName} ${contact.lastName}\n` +
+                `• *Email:* ${contact.email}\n` +
+                `• *Phone:* ${contact.phone}\n\n` +
+                `*Shipping Address:*\n` +
+                `${address.street}, ${address.city}, ${address.state} - ${address.zipCode}, ${address.country}\n\n` +
+                `*Items:*\n${itemsText}\n\n` +
+                `*Payment Summary:*\n` +
+                `• *Subtotal:* ${formatINR(subtotal)}\n` +
+                `• *Discount:* ${discount > 0 ? `-${formatINR(discount)}` : 'N/A'}\n` +
+                `• *Shipping:* ${formatINR(shipping)}\n` +
+                `• *Total:* ${formatINR(total)}\n` +
+                (contact.orderNote ? `\n*Order Note:* ${contact.orderNote}\n` : '') +
+                `\n*Kindly share the QR CODE for payment so I can confirm my order*` +
+                (imagesList ? `\n\n${imagesList}` : '');
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9+]/g, '')}?text=${encodedMessage}`;
+
+            // Redirect the user to WhatsApp
+            window.location.href = whatsappUrl;
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to place order. Please try again.');
         } finally {
@@ -221,6 +276,16 @@ export default function CheckoutPage() {
                             <h2 className="text-xl font-bold mb-5 flex items-center gap-2">
                                 <span className="text-cta">✉</span> Contact Details
                             </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-1.5">First Name *</label>
+                                    <input name="firstName" value={contact.firstName} onChange={handleContactChange} required placeholder="John" className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-background text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-cta/50 transition" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-1.5">Last Name *</label>
+                                    <input name="lastName" value={contact.lastName} onChange={handleContactChange} required placeholder="Doe" className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-background text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-cta/50 transition" />
+                                </div>
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-1.5">Email *</label>
@@ -265,7 +330,7 @@ export default function CheckoutPage() {
                         {/* Order Note */}
                         <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm">
                             <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-                                <span className="text-cta">📝</span> Order Note
+                                <span className="text-cta"></span> Order Note
                                 <span className="text-xs font-normal text-secondary-text ml-1">(optional)</span>
                             </h2>
                             <textarea
@@ -273,7 +338,7 @@ export default function CheckoutPage() {
                                 value={contact.orderNote}
                                 onChange={handleContactChange}
                                 rows={3}
-                                placeholder="Any special instructions, delivery preferences…"
+                                placeholder="Any special instructions, Any 3 items you do not want in your scoop.."
                                 className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-background text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-cta/50 transition resize-none"
                             />
                         </div>
@@ -338,11 +403,7 @@ export default function CheckoutPage() {
                                 )}
                                 <div className="flex justify-between">
                                     <span>Shipping</span>
-                                    {shipping === 0 ? (
-                                        <span className="font-semibold text-green-600 dark:text-green-400">FREE 🎉</span>
-                                    ) : (
-                                        <span className="font-medium text-foreground">{formatINR(shipping)}</span>
-                                    )}
+                                    <span className="font-medium text-foreground">{formatINR(shipping)}</span>
                                 </div>
 
                             </div>
