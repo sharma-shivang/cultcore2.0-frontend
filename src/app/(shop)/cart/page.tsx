@@ -50,12 +50,21 @@ export default function CartPage() {
                             const product = item.product;
                             if (!product) return null;
 
+                            const variant = item.variantSku ? product.variants?.find((v: any) => v.sku === item.variantSku) : null;
+                            const displaySize = item.size || variant?.size;
+                            const displayColor = item.color || variant?.color;
+                            const itemPrice = variant?.price ?? product.price;
+                            const availableStock = variant ? variant.stock : product.stock;
+                            const itemKey = item.variantSku
+                                ? `${product._id}-${item.variantSku}`
+                                : `${product._id}-${displaySize || ''}-${displayColor || ''}`;
+
                             return (
-                                <div key={product._id} className="flex flex-col sm:flex-row gap-6 p-6 bg-surface border border-primary/10 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                <div key={itemKey} className="flex flex-col sm:flex-row gap-6 p-6 bg-surface border border-primary/10 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
                                     {/* Product Image */}
                                     <div className="w-full sm:w-32 h-32 shrink-0 bg-primary/5 rounded-xl overflow-hidden relative group">
                                         <img
-                                            src={(item.variantSku && item.product?.variants?.find((v: any) => v.sku === item.variantSku)?.images?.[0]) || product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800'}
+                                            src={variant?.images?.[0] || product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800'}
                                             alt={product.title}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
@@ -70,11 +79,11 @@ export default function CartPage() {
                                                 </Link>
                                                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                                                     <p className="text-sm text-secondary-text">{typeof product.category === 'object' ? product.category.name : product.category}</p>
-                                                    {item.size && (
-                                                        <span className="text-sm text-secondary-text">Size: <span className="text-foreground font-medium">{item.size}</span></span>
+                                                    {displaySize && (
+                                                        <span className="text-sm text-secondary-text">Size: <span className="text-foreground font-medium">{displaySize}</span></span>
                                                     )}
-                                                    {item.color && (
-                                                        <span className="text-sm text-secondary-text">Color: <span className="text-foreground font-medium">{item.color}</span></span>
+                                                    {displayColor && (
+                                                        <span className="text-sm text-secondary-text">Color: <span className="text-foreground font-medium">{displayColor}</span></span>
                                                     )}
                                                     {product.discountPercent > 0 && (
                                                         <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
@@ -116,7 +125,7 @@ export default function CartPage() {
                                                 <button
                                                     onClick={() => updateQuantity(product._id, item.quantity + 1, item.variantSku)}
                                                     className="px-3 py-2 text-secondary-text hover:bg-primary/5 hover:text-foreground transition-colors disabled:opacity-50"
-                                                    disabled={item.quantity >= (item.variantSku ? (product.variants?.find((v: any) => v.sku === item.variantSku)?.stock || 0) : product.stock)}
+                                                    disabled={item.quantity >= availableStock}
                                                 >
                                                     <Plus size={16} />
                                                 </button>
@@ -126,21 +135,21 @@ export default function CartPage() {
                                                 {product.discountPercent > 0 ? (
                                                     <>
                                                         <p className="font-bold text-lg text-cta">
-                                                            {formatINR(Math.round(product.price * (1 - product.discountPercent / 100)) * item.quantity)}
+                                                            {formatINR(Math.round(itemPrice * (1 - product.discountPercent / 100)) * item.quantity)}
                                                         </p>
                                                         <p className="text-xs text-secondary-text line-through">
-                                                            {formatINR(product.price * item.quantity)}
+                                                            {formatINR(itemPrice * item.quantity)}
                                                         </p>
                                                     </>
                                                 ) : (
                                                     <p className="font-bold text-lg text-foreground">
-                                                        {formatINR(product.price * item.quantity)}
+                                                        {formatINR(itemPrice * item.quantity)}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {item.quantity >= product.stock && (
+                                        {item.quantity >= availableStock && (
                                             <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
                                                 Maximum stock reached
                                             </div>
@@ -166,7 +175,7 @@ export default function CartPage() {
                                 {savedItems.map((item) => {
                                     const product = item.product;
                                     if (!product) return null;
-
+                                    
                                     return (
                                         <div key={product._id} className="flex flex-col sm:flex-row gap-6 p-6 bg-surface/50 border border-primary/5 rounded-2xl grayscale-[0.5] hover:grayscale-0 transition-all opacity-80 hover:opacity-100">
                                             <div className="w-full sm:w-24 h-24 shrink-0 bg-primary/5 rounded-xl overflow-hidden">

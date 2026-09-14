@@ -178,7 +178,11 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium text-foreground truncate">{product?.title || 'Product unavailable'}</p>
-                                        <p className="text-sm text-secondary-text">Qty: {item.quantity} × {formatINR(item.price)}</p>
+                                        <div className="flex flex-wrap items-center gap-x-3 text-xs text-secondary-text mt-0.5">
+                                            <span>Qty: {item.quantity} × {formatINR(item.price)}</span>
+                                            {item.size && <span>Size: <strong className="text-foreground font-medium">{item.size}</strong></span>}
+                                            {item.color && <span>Color: <strong className="text-foreground font-medium">{item.color}</strong></span>}
+                                        </div>
                                     </div>
                                     <p className="font-semibold text-foreground shrink-0">{formatINR(item.price * item.quantity)}</p>
                                 </div>

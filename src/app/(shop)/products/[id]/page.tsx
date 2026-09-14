@@ -285,7 +285,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     </div>
 
                     <div className="prose prose-sm prose-gray max-w-none mb-8">
-                        <p className="text-secondary-text leading-relaxed text-lg">{product.description}</p>
+                        <p className="text-secondary-text leading-relaxed text-lg whitespace-pre-wrap">{product.description}</p>
                     </div>
 
                     {/* Action Area */}

@@ -28,7 +28,7 @@ export default function CheckoutPage() {
     const [address, setAddress] = useState<ShippingAddress>({
         street: '', city: '', state: '', zipCode: '', country: '',
     });
-    const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', orderNote: '' });
+    const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', instagram: '', orderNote: '' });
 
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -109,6 +109,7 @@ export default function CheckoutPage() {
                 firstName: contact.firstName,
                 lastName: contact.lastName,
                 orderNote: contact.orderNote || undefined,
+                instagram: contact.instagram || undefined,
                 ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
             });
             const createdOrderId = response.data._id;
@@ -129,14 +130,26 @@ export default function CheckoutPage() {
             const itemsText = items
                 .map((item, index) => {
                     const product = item.product as any;
-                    return `${index + 1}. ${product?.title || 'Product'} x ${item.quantity} (${formatINR((product?.price || 0) * item.quantity)})`;
+                    const variant = item.variantSku ? product?.variants?.find((v: any) => v.sku === item.variantSku) : null;
+                    const displaySize = item.size || variant?.size;
+                    const displayColor = item.color || variant?.color;
+                    const itemPrice = variant?.price ?? product?.price ?? 0;
+
+                    const variantDetails = [
+                        displaySize ? `Size: ${displaySize}` : '',
+                        displayColor ? `Color: ${displayColor}` : '',
+                    ].filter(Boolean).join(', ');
+
+                    const detailsStr = variantDetails ? ` (${variantDetails})` : '';
+                    return `${index + 1}. ${product?.title || 'Product'}${detailsStr} x ${item.quantity} (${formatINR(itemPrice * item.quantity)})`;
                 })
                 .join('\n');
 
             const imagesList = items
                 .map((item) => {
                     const product = item.product as any;
-                    return getAbsoluteImageUrl(product?.images?.[0]);
+                    const variant = item.variantSku ? product?.variants?.find((v: any) => v.sku === item.variantSku) : null;
+                    return getAbsoluteImageUrl(variant?.images?.[0] || product?.images?.[0]);
                 })
                 .filter((url) => !!url)
                 .join('\n');
@@ -145,8 +158,9 @@ export default function CheckoutPage() {
                 `*Order Details:*\n` +
                 `• *Name:* ${contact.firstName} ${contact.lastName}\n` +
                 `• *Email:* ${contact.email}\n` +
-                `• *Phone:* ${contact.phone}\n\n` +
-                `*Shipping Address:*\n` +
+                `• *Phone:* ${contact.phone}\n` +
+                (contact.instagram ? `• *Instagram:* ${contact.instagram}\n` : '') +
+                `\n*Shipping Address:*\n` +
                 `${address.street}, ${address.city}, ${address.state} - ${address.zipCode}, ${address.country}\n\n` +
                 `*Items:*\n${itemsText}\n\n` +
                 `*Payment Summary:*\n` +
@@ -286,7 +300,7 @@ export default function CheckoutPage() {
                                     <input name="lastName" value={contact.lastName} onChange={handleContactChange} required placeholder="Doe" className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-background text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-cta/50 transition" />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-1.5">Email *</label>
                                     <input name="email" type="email" value={contact.email} onChange={handleContactChange} required placeholder="you@example.com" className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-background text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-cta/50 transition" />
@@ -294,6 +308,10 @@ export default function CheckoutPage() {
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-1.5">Phone *</label>
                                     <input name="phone" type="tel" value={contact.phone} onChange={handleContactChange} required placeholder="+91 98765 43210" className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-background text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-cta/50 transition" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-1.5">Instagram Handle</label>
+                                    <input name="instagram" type="text" value={contact.instagram} onChange={handleContactChange} placeholder="@username" className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-background text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-cta/50 transition" />
                                 </div>
                             </div>
                         </div>
@@ -305,21 +323,34 @@ export default function CheckoutPage() {
                                 {items.map((item) => {
                                     const product = item.product as any;
                                     if (!product) return null;
+
+                                    const variant = item.variantSku ? product.variants?.find((v: any) => v.sku === item.variantSku) : null;
+                                    const displaySize = item.size || variant?.size;
+                                    const displayColor = item.color || variant?.color;
+                                    const itemPrice = variant?.price ?? product.price;
+                                    const itemKey = item.variantSku
+                                        ? `${product._id}-${item.variantSku}`
+                                        : `${product._id}-${displaySize || ''}-${displayColor || ''}`;
+
                                     return (
-                                        <div key={product._id} className="flex items-center gap-4">
+                                        <div key={itemKey} className="flex items-center gap-4">
                                             <div className="w-14 h-14 rounded-xl bg-primary/5 overflow-hidden shrink-0">
                                                 <img
-                                                    src={product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200'}
+                                                    src={variant?.images?.[0] || product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200'}
                                                     alt={product.title}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="font-medium text-foreground truncate">{product.title}</p>
-                                                <p className="text-sm text-secondary-text">Qty: {item.quantity}</p>
+                                                <div className="flex flex-wrap items-center gap-x-3 text-xs text-secondary-text mt-0.5">
+                                                    <span>Qty: {item.quantity}</span>
+                                                    {displaySize && <span>Size: <strong className="text-foreground font-medium">{displaySize}</strong></span>}
+                                                    {displayColor && <span>Color: <strong className="text-foreground font-medium">{displayColor}</strong></span>}
+                                                </div>
                                             </div>
                                             <p className="font-semibold text-foreground shrink-0">
-                                                {formatINR(product.price * item.quantity)}
+                                                {formatINR(itemPrice * item.quantity)}
                                             </p>
                                         </div>
                                     );
