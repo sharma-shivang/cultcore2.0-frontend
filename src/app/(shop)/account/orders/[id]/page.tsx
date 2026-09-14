@@ -5,7 +5,7 @@ import { api } from '@/lib/api/axios';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Package, MapPin, Loader2, CheckCircle, RefreshCw, AlertCircle, User } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, Loader2, CheckCircle, RefreshCw, AlertCircle, User, Mail, Phone, AtSign } from 'lucide-react';
 import { formatINR } from '@/lib/currency';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 
@@ -160,107 +160,159 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Items */}
-                <div className="md:col-span-2 bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm">
-                    <h2 className="font-bold text-lg mb-4 flex items-center gap-2"><Package size={18} className="text-cta" /> Items Ordered</h2>
-                    <div className="space-y-4">
-                        {order.items.map((item: any) => {
-                            const product = item.product;
-                            return (
-                                <div key={item._id} className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-xl bg-primary/5 overflow-hidden shrink-0">
-                                        <img
-                                            src={product?.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200'}
-                                            alt={product?.title || 'Product'}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-medium text-foreground truncate">{product?.title || 'Product unavailable'}</p>
-                                        <div className="flex flex-wrap items-center gap-x-3 text-xs text-secondary-text mt-0.5">
-                                            <span>Qty: {item.quantity} × {formatINR(item.price)}</span>
-                                            {item.size && <span>Size: <strong className="text-foreground font-medium">{item.size}</strong></span>}
-                                            {item.color && <span>Color: <strong className="text-foreground font-medium">{item.color}</strong></span>}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                {/* Main Content Area (Items + Customer & Address) */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Items Ordered Card */}
+                    <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm">
+                        <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
+                            <Package size={20} className="text-cta" /> Items Ordered ({order.items.length})
+                        </h2>
+                        <div className="space-y-4 divide-y divide-primary/5">
+                            {order.items.map((item: any, idx: number) => {
+                                const product = item.product;
+                                return (
+                                    <div key={item._id || idx} className="flex items-center gap-4 pt-4 first:pt-0">
+                                        <div className="w-16 h-16 rounded-xl bg-primary/5 overflow-hidden shrink-0 border border-primary/10">
+                                            <img
+                                                src={product?.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200'}
+                                                alt={product?.title || 'Product'}
+                                                className="w-full h-full object-cover"
+                                            />
                                         </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-medium text-foreground text-sm sm:text-base truncate">{product?.title || 'Product unavailable'}</p>
+                                            <div className="flex flex-wrap items-center gap-x-3 text-xs text-secondary-text mt-1">
+                                                <span>Qty: {item.quantity} × {formatINR(item.price)}</span>
+                                                {item.size && <span>Size: <strong className="text-foreground font-medium">{item.size}</strong></span>}
+                                                {item.color && <span>Color: <strong className="text-foreground font-medium">{item.color}</strong></span>}
+                                            </div>
+                                        </div>
+                                        <p className="font-bold text-foreground shrink-0 text-sm sm:text-base">{formatINR(item.price * item.quantity)}</p>
                                     </div>
-                                    <p className="font-semibold text-foreground shrink-0">{formatINR(item.price * item.quantity)}</p>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Customer & Address Details Card (Spacious 2-column layout) */}
+                    <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {/* Customer Details Box */}
+                            <div className="space-y-3">
+                                <h3 className="font-bold text-base flex items-center gap-2 text-foreground pb-2 border-b border-primary/10">
+                                    <User size={18} className="text-cta" /> Customer Details
+                                </h3>
+                                <div>
+                                    <p className="text-xs text-secondary-text">Full Name</p>
+                                    <p className="text-sm font-semibold text-foreground mt-0.5">
+                                        {[order.firstName, order.lastName].filter(Boolean).join(' ').trim() || order.user?.name || 'N/A'}
+                                    </p>
                                 </div>
-                            );
-                        })}
+                                <div>
+                                    <p className="text-xs text-secondary-text">Email Address</p>
+                                    <p className="text-sm font-medium text-foreground mt-0.5 break-all">
+                                        {order.email || order.user?.email || 'N/A'}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-secondary-text">Phone Number</p>
+                                    <p className="text-sm font-medium text-foreground mt-0.5">
+                                        {order.phone || 'N/A'}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-secondary-text">Instagram Handle</p>
+                                    {order.instagram ? (
+                                        <div className="mt-1">
+                                            <span className="inline-flex items-center gap-1.5 bg-pink-500/10 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-xl font-mono font-semibold text-xs border border-pink-500/20">
+                                                <AtSign size={13} />
+                                                {order.instagram.replace(/^@/, '')}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-secondary-text/60 mt-0.5">N/A</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Full Shipping Address Box */}
+                            <div className="space-y-3">
+                                <h3 className="font-bold text-base flex items-center gap-2 text-foreground pb-2 border-b border-primary/10">
+                                    <MapPin size={18} className="text-cta" /> Shipping Address
+                                </h3>
+                                <div>
+                                    <p className="text-xs text-secondary-text">Street Address</p>
+                                    <p className="text-sm font-medium text-foreground mt-0.5 leading-snug">
+                                        {order.shippingAddress?.street || 'N/A'}
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <p className="text-xs text-secondary-text">City / State</p>
+                                        <p className="text-sm font-medium text-foreground mt-0.5">
+                                            {order.shippingAddress?.city}, {order.shippingAddress?.state}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-secondary-text">ZIP / PIN Code</p>
+                                        <p className="text-sm font-medium text-foreground mt-0.5 font-mono">
+                                            {order.shippingAddress?.zipCode}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-secondary-text">Country</p>
+                                    <p className="text-sm font-medium text-foreground mt-0.5">
+                                        {order.shippingAddress?.country}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Order Note Banner if present */}
+                        {order.orderNote && (
+                            <div className="pt-4 border-t border-primary/10">
+                                <p className="text-xs font-semibold text-foreground mb-1">Customer Order Note:</p>
+                                <p className="text-xs text-secondary-text bg-primary/5 border border-primary/10 p-3 rounded-xl italic leading-relaxed">
+                                    "{order.orderNote}"
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                {/* Summary & Address */}
-                <div className="space-y-4">
-                    <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm">
-                        <h2 className="font-bold mb-4">Order Summary</h2>
-                        <div className="space-y-2 text-sm text-secondary-text">
-                            <div className="flex justify-between"><span>Subtotal</span><span className="text-foreground">{formatINR(order.subtotal)}</span></div>
-                            <div className="flex justify-between"><span>Shipping</span><span className="text-foreground">{order.shipping === 0 ? <span className="text-green-600 dark:text-green-400 font-semibold">FREE</span> : formatINR(order.shipping)}</span></div>
+                {/* Sidebar Column (Order Summary) */}
+                <div className="space-y-6 lg:sticky lg:top-24">
+                    <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
+                        <h2 className="font-bold text-lg pb-3 border-b border-primary/10">Order Summary</h2>
+                        <div className="space-y-3 text-sm text-secondary-text">
+                            <div className="flex justify-between">
+                                <span>Subtotal</span>
+                                <span className="font-medium text-foreground">{formatINR(order.subtotal)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Shipping</span>
+                                <span className="font-medium text-foreground">
+                                    {order.shipping === 0 ? <span className="text-green-600 dark:text-green-400 font-semibold">FREE</span> : formatINR(order.shipping)}
+                                </span>
+                            </div>
                             {order.discount > 0 && (
                                 <div className="flex justify-between text-green-600 dark:text-green-400">
                                     <span>Discount {order.couponCode && `(${order.couponCode})`}</span>
                                     <span className="font-semibold">−{formatINR(order.discount)}</span>
                                 </div>
                             )}
-                            <div className="flex justify-between font-bold pt-2 border-t border-primary/10 text-foreground text-base">
-                                <span>Total</span><span>{formatINR(order.total)}</span>
+                            <div className="flex justify-between font-bold text-lg pt-3 border-t border-primary/10 text-foreground">
+                                <span>Total Amount</span>
+                                <span className="text-cta">{formatINR(order.total)}</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Customer & Shipping Details */}
-                    <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
-                        <h2 className="font-bold text-base flex items-center gap-2 text-foreground">
-                            <User size={18} className="text-cta" /> Customer Details
-                        </h2>
-                        <div className="space-y-2 text-sm text-secondary-text">
-                            <div className="flex justify-between items-center">
-                                <span className="font-medium text-foreground">Name:</span>
-                                <span className="text-foreground font-medium">{[order.firstName, order.lastName].filter(Boolean).join(' ').trim() || order.user?.name || 'N/A'}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="font-medium text-foreground">Email:</span>
-                                <span>{order.email || order.user?.email || 'N/A'}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="font-medium text-foreground">Phone:</span>
-                                <span>{order.phone || 'N/A'}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="font-medium text-foreground">Instagram ID:</span>
-                                {order.instagram ? (
-                                    <span className="bg-pink-500/10 text-pink-600 dark:text-pink-400 px-2 py-0.5 rounded font-mono font-medium text-xs">
-                                        {order.instagram.startsWith('@') ? order.instagram : `@${order.instagram}`}
-                                    </span>
-                                ) : (
-                                    <span className="text-secondary-text/60">N/A</span>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="pt-4 border-t border-primary/10">
-                            <h3 className="font-bold text-sm flex items-center gap-2 text-foreground mb-2">
-                                <MapPin size={16} className="text-cta" /> Full Shipping Address
-                            </h3>
-                            <div className="text-sm text-secondary-text space-y-0.5">
-                                <p className="text-foreground font-medium">{order.shippingAddress?.street}</p>
-                                <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}</p>
-                                <p>{order.shippingAddress?.country}</p>
-                            </div>
-                        </div>
-
-                        {order.orderNote && (
-                            <div className="pt-3 border-t border-primary/10">
-                                <p className="text-xs font-semibold text-foreground mb-1">Order Note:</p>
-                                <p className="text-xs text-secondary-text bg-primary/5 p-2.5 rounded-lg italic">"{order.orderNote}"</p>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="text-xs text-secondary-text px-1">
-                        Placed on {new Date(order.createdAt).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}
+                    <div className="bg-surface border border-primary/10 rounded-2xl p-4 shadow-sm text-xs text-secondary-text space-y-1">
+                        <p className="font-medium text-foreground">Order Date & Time</p>
+                        <p>{new Date(order.createdAt).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p>
                     </div>
                 </div>
             </div>
