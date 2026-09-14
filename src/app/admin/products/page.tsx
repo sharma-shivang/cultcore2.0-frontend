@@ -117,7 +117,93 @@ export default function AdminProductsPage() {
                 </Link>
             </div>
 
-            <div className="bg-surface rounded-xl border border-primary/10 overflow-hidden shadow-sm">
+            {/* Mobile Product Card List (< md) */}
+            <div className="md:hidden space-y-4">
+                {products.length === 0 ? (
+                    <div className="bg-surface rounded-xl border border-primary/10 p-8 text-center text-secondary-text">
+                        No products found.
+                    </div>
+                ) : (
+                    products.map((product) => (
+                        <div key={product._id} className="bg-surface border border-primary/10 rounded-2xl p-4 shadow-sm space-y-3">
+                            <div className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <img
+                                        src={product.images?.[0] || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200'}
+                                        alt={product.title}
+                                        className="h-12 w-12 rounded-xl object-cover shrink-0 border border-primary/10"
+                                    />
+                                    <div className="min-w-0">
+                                        <p className="font-semibold text-foreground text-sm truncate">{product.title}</p>
+                                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-foreground mt-0.5">
+                                            {typeof product.category === 'object' ? product.category.name : product.category}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => handleToggleFeatured(product)}
+                                    disabled={togglingFeaturedId === product._id}
+                                    className={`p-2 rounded-full transition-all shrink-0 ${product.isFeatured ? 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20' : 'text-secondary-text hover:text-foreground hover:bg-primary/10'}`}
+                                >
+                                    {togglingFeaturedId === product._id ? (
+                                        <Loader2 size={16} className="animate-spin" />
+                                    ) : (
+                                        <Star size={16} className={product.isFeatured ? 'fill-current' : ''} />
+                                    )}
+                                </button>
+                            </div>
+
+                            <div className="flex items-center justify-between text-xs pt-2 border-t border-primary/10">
+                                <div>
+                                    <span className="text-secondary-text block text-[10px]">Price:</span>
+                                    {product.discountPercent > 0 ? (
+                                        <div className="flex items-baseline gap-1.5">
+                                            <span className="font-bold text-cta text-sm">{formatINR(effectivePrice(product))}</span>
+                                            <span className="text-[10px] text-secondary-text line-through">{formatINR(product.price)}</span>
+                                        </div>
+                                    ) : (
+                                        <span className="font-bold text-foreground text-sm">{formatINR(product.price)}</span>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <span className="text-secondary-text block text-[10px] text-center">Stock:</span>
+                                    <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold ${product.stock > 10 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : product.stock > 0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'}`}>
+                                        {product.stock} left
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <span className="text-secondary-text block text-[10px] text-right">Discount:</span>
+                                    {product.discountPercent > 0 ? (
+                                        <span className="font-bold text-red-600 dark:text-red-400 text-xs">
+                                            {product.discountPercent}% OFF
+                                        </span>
+                                    ) : (
+                                        <span className="text-secondary-text/50 text-xs">None</span>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end gap-2 pt-2 border-t border-primary/10">
+                                <Link href={`/products/${product._id}`} target="_blank" className="p-2 text-secondary-text hover:text-cta bg-primary/5 rounded-lg text-xs flex items-center gap-1 font-medium">
+                                    <ExternalLink size={14} /> View
+                                </Link>
+                                <Link href={`/admin/products/${product._id}/edit`} className="p-2 text-secondary-text hover:text-foreground bg-primary/5 rounded-lg text-xs flex items-center gap-1 font-medium">
+                                    <Edit2 size={14} /> Edit
+                                </Link>
+                                <button onClick={() => handleDelete(product._id, product.title)} disabled={deletingId === product._id} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg text-xs flex items-center gap-1 font-medium">
+                                    <Trash2 size={14} /> Delete
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {/* Desktop Product Table (>= md) */}
+            <div className="hidden md:block bg-surface rounded-xl border border-primary/10 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm text-secondary-text">
                         <thead className="bg-primary/5 text-foreground text-xs uppercase font-semibold">
