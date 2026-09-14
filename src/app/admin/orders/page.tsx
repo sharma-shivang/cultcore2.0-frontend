@@ -162,14 +162,101 @@ export default function AdminOrdersPage() {
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="bg-surface rounded-xl border border-primary/10 overflow-hidden shadow-sm">
+            {/* Mobile Card List View (< md) */}
+            <div className="md:hidden space-y-4">
+                {loading ? (
+                    <div className="py-12 text-center bg-surface border border-primary/10 rounded-xl">
+                        <Loader2 className="animate-spin text-cta mx-auto" size={28} />
+                    </div>
+                ) : orders.length === 0 ? (
+                    <div className="py-12 text-center bg-surface border border-primary/10 rounded-xl text-secondary-text">
+                        No orders found{categoryId ? ' for this category' : ''}.
+                    </div>
+                ) : (
+                    orders.map((order) => {
+                        const customerName = [order.firstName, order.lastName].filter(Boolean).join(' ').trim() || order.user?.name || 'N/A';
+                        const customerEmail = order.email || order.user?.email || '';
+
+                        return (
+                            <div key={order._id} className="bg-surface border border-primary/10 rounded-2xl p-4 shadow-sm space-y-3">
+                                <div className="flex items-center justify-between gap-2 border-b border-primary/10 pb-3">
+                                    <div>
+                                        <span className="font-mono text-xs font-bold text-foreground">
+                                            #{(order._id || '').slice(-8).toUpperCase()}
+                                        </span>
+                                        <p className="text-[11px] text-secondary-text">
+                                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                                        </p>
+                                    </div>
+
+                                    {updatingId === order._id ? (
+                                        <Loader2 size={16} className="animate-spin text-cta" />
+                                    ) : (
+                                        <select
+                                            value={order.status}
+                                            onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                            className={`text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer capitalize focus:outline-none focus:ring-2 focus:ring-cta/30 ${STATUS_STYLES[order.status] || STATUS_STYLES.pending}`}
+                                        >
+                                            {STATUSES.map(s => (
+                                                <option key={s} value={s} className="bg-surface text-foreground capitalize">{s}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
+                                <div className="space-y-1.5 text-xs">
+                                    <div className="flex justify-between items-start gap-2">
+                                        <span className="text-secondary-text shrink-0">Customer:</span>
+                                        <span className="font-semibold text-foreground text-right">{customerName}</span>
+                                    </div>
+                                    {customerEmail && (
+                                        <div className="flex justify-between items-start gap-2">
+                                            <span className="text-secondary-text shrink-0">Email:</span>
+                                            <span className="text-secondary-text text-right truncate max-w-[200px]">{customerEmail}</span>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-between items-center gap-2">
+                                        <span className="text-secondary-text shrink-0">Instagram:</span>
+                                        {order.instagram ? (
+                                            <span className="bg-pink-500/10 text-pink-600 dark:text-pink-400 px-2 py-0.5 rounded font-mono font-medium text-[11px]">
+                                                {order.instagram.startsWith('@') ? order.instagram : `@${order.instagram}`}
+                                            </span>
+                                        ) : (
+                                            <span className="text-secondary-text/60">N/A</span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between pt-3 border-t border-primary/10">
+                                    <div>
+                                        <p className="text-[11px] text-secondary-text">{order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? 's' : ''}</p>
+                                        <p className="text-base font-bold text-foreground">{formatINR(order.total ?? 0)}</p>
+                                    </div>
+
+                                    <Link
+                                        href={`/account/orders/${order._id}`}
+                                        target="_blank"
+                                        className="inline-flex items-center gap-1.5 bg-cta text-surface hover:bg-cta-hover px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-sm"
+                                    >
+                                        <span>View Details</span>
+                                        <ExternalLink size={13} />
+                                    </Link>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
+            </div>
+
+            {/* Desktop Table (>= md) */}
+            <div className="hidden md:block bg-surface rounded-xl border border-primary/10 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm text-secondary-text">
                         <thead className="bg-primary/5 text-foreground text-xs uppercase font-semibold">
                             <tr>
                                 <th className="px-6 py-4">Order ID</th>
                                 <th className="px-6 py-4">Customer</th>
+                                <th className="px-6 py-4">Instagram</th>
                                 <th className="px-6 py-4">Items</th>
                                 <th
                                     className="px-6 py-4 text-right cursor-pointer select-none hover:text-cta transition-colors"
@@ -190,64 +277,78 @@ export default function AdminOrdersPage() {
                         <tbody className="divide-y divide-primary/5">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={7} className="py-16 text-center">
+                                    <td colSpan={8} className="py-16 text-center">
                                         <Loader2 className="animate-spin text-cta mx-auto" size={28} />
                                     </td>
                                 </tr>
                             ) : orders.length === 0 ? (
                                 <tr>
-                                    <td colSpan={7} className="px-6 py-12 text-center text-secondary-text">
+                                    <td colSpan={8} className="px-6 py-12 text-center text-secondary-text">
                                         No orders found{categoryId ? ' for this category' : ''}.
                                     </td>
                                 </tr>
                             ) : (
-                                orders.map((order) => (
-                                    <tr key={order._id} className="hover:bg-primary/5 transition-colors">
-                                        <td className="px-6 py-4 font-mono text-xs text-foreground whitespace-nowrap">
-                                            #{(order._id || '').slice(-8).toUpperCase()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <p className="font-medium text-foreground">{order.user?.name || 'N/A'}</p>
-                                            <p className="text-xs text-secondary-text">{order.user?.email || ''}</p>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? 's' : ''}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right font-semibold text-foreground">
-                                            {formatINR(order.total ?? 0)}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-xs">
-                                            {order.createdAt
-                                                ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                                                : '—'}
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            {updatingId === order._id ? (
-                                                <Loader2 size={16} className="animate-spin mx-auto text-cta" />
-                                            ) : (
-                                                <select
-                                                    value={order.status}
-                                                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                                                    className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer capitalize focus:outline-none focus:ring-2 focus:ring-cta/30 ${STATUS_STYLES[order.status] || STATUS_STYLES.pending}`}
+                                orders.map((order) => {
+                                    const customerName = [order.firstName, order.lastName].filter(Boolean).join(' ').trim() || order.user?.name || 'N/A';
+                                    const customerEmail = order.email || order.user?.email || '';
+
+                                    return (
+                                        <tr key={order._id} className="hover:bg-primary/5 transition-colors">
+                                            <td className="px-6 py-4 font-mono text-xs text-foreground whitespace-nowrap">
+                                                #{(order._id || '').slice(-8).toUpperCase()}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <p className="font-medium text-foreground">{customerName}</p>
+                                                <p className="text-xs text-secondary-text">{customerEmail}</p>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-xs font-mono">
+                                                {order.instagram ? (
+                                                    <span className="bg-pink-500/10 text-pink-600 dark:text-pink-400 px-2.5 py-1 rounded-md font-medium">
+                                                        {order.instagram.startsWith('@') ? order.instagram : `@${order.instagram}`}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-secondary-text/60">N/A</span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? 's' : ''}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right font-semibold text-foreground">
+                                                {formatINR(order.total ?? 0)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-xs">
+                                                {order.createdAt
+                                                    ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                                    : '—'}
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                {updatingId === order._id ? (
+                                                    <Loader2 size={16} className="animate-spin mx-auto text-cta" />
+                                                ) : (
+                                                    <select
+                                                        value={order.status}
+                                                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                                        className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer capitalize focus:outline-none focus:ring-2 focus:ring-cta/30 ${STATUS_STYLES[order.status] || STATUS_STYLES.pending}`}
+                                                    >
+                                                        {STATUSES.map(s => (
+                                                            <option key={s} value={s} className="bg-surface text-foreground capitalize">{s}</option>
+                                                        ))}
+                                                    </select>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <Link
+                                                    href={`/account/orders/${order._id}`}
+                                                    target="_blank"
+                                                    title="View Order Detail"
+                                                    className="p-2 text-secondary-text hover:text-cta transition-colors inline-flex"
                                                 >
-                                                    {STATUSES.map(s => (
-                                                        <option key={s} value={s} className="bg-surface text-foreground capitalize">{s}</option>
-                                                    ))}
-                                                </select>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <Link
-                                                href={`/account/orders/${order._id}`}
-                                                target="_blank"
-                                                title="View Order Detail"
-                                                className="p-2 text-secondary-text hover:text-cta transition-colors inline-flex"
-                                            >
-                                                <ExternalLink size={16} />
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))
+                                                    <ExternalLink size={16} />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>

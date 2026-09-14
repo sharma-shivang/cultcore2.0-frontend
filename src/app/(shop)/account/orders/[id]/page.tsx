@@ -5,7 +5,7 @@ import { api } from '@/lib/api/axios';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Package, MapPin, Loader2, CheckCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, Loader2, CheckCircle, RefreshCw, AlertCircle, User } from 'lucide-react';
 import { formatINR } from '@/lib/currency';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 
@@ -210,13 +210,53 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                         </div>
                     </div>
 
-                    <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm">
-                        <h2 className="font-bold mb-3 flex items-center gap-2"><MapPin size={16} className="text-cta" /> Shipping Address</h2>
-                        <div className="text-sm text-secondary-text space-y-0.5">
-                            <p>{order.shippingAddress.street}</p>
-                            <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
-                            <p>{order.shippingAddress.country}</p>
+                    {/* Customer & Shipping Details */}
+                    <div className="bg-surface border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
+                        <h2 className="font-bold text-base flex items-center gap-2 text-foreground">
+                            <User size={18} className="text-cta" /> Customer Details
+                        </h2>
+                        <div className="space-y-2 text-sm text-secondary-text">
+                            <div className="flex justify-between items-center">
+                                <span className="font-medium text-foreground">Name:</span>
+                                <span className="text-foreground font-medium">{[order.firstName, order.lastName].filter(Boolean).join(' ').trim() || order.user?.name || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="font-medium text-foreground">Email:</span>
+                                <span>{order.email || order.user?.email || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="font-medium text-foreground">Phone:</span>
+                                <span>{order.phone || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="font-medium text-foreground">Instagram ID:</span>
+                                {order.instagram ? (
+                                    <span className="bg-pink-500/10 text-pink-600 dark:text-pink-400 px-2 py-0.5 rounded font-mono font-medium text-xs">
+                                        {order.instagram.startsWith('@') ? order.instagram : `@${order.instagram}`}
+                                    </span>
+                                ) : (
+                                    <span className="text-secondary-text/60">N/A</span>
+                                )}
+                            </div>
                         </div>
+
+                        <div className="pt-4 border-t border-primary/10">
+                            <h3 className="font-bold text-sm flex items-center gap-2 text-foreground mb-2">
+                                <MapPin size={16} className="text-cta" /> Full Shipping Address
+                            </h3>
+                            <div className="text-sm text-secondary-text space-y-0.5">
+                                <p className="text-foreground font-medium">{order.shippingAddress?.street}</p>
+                                <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}</p>
+                                <p>{order.shippingAddress?.country}</p>
+                            </div>
+                        </div>
+
+                        {order.orderNote && (
+                            <div className="pt-3 border-t border-primary/10">
+                                <p className="text-xs font-semibold text-foreground mb-1">Order Note:</p>
+                                <p className="text-xs text-secondary-text bg-primary/5 p-2.5 rounded-lg italic">"{order.orderNote}"</p>
+                            </div>
+                        )}
                     </div>
 
                     <div className="text-xs text-secondary-text px-1">

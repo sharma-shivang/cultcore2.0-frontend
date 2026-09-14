@@ -36,9 +36,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     // Wrap the admin interface. Note we don't render the global Navbar/Footer here.
     return (
-        <div className="flex min-h-screen bg-background text-foreground">
+        <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground">
             <AdminSidebar />
-            <main className="flex-1 overflow-x-hidden p-8">
+            <main className="flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
                 {children}
             </main>
         </div>
